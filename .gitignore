@@ -26,4 +26,4 @@ buld/
 # Other system files
 .DS_Store
 Thumbs.db
-
+*.qtc_*/
