@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="EBFMap.qml">/Users/orazioarcidiacono/EBF_Map/EBFMap.qml</file>
+</qresource>
+</RCC>

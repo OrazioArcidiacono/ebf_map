@@ -1,0 +1,28 @@
+# Qt build directories
+build-*/
+
+# Qt project files
+*.user
+*.pro.user
+*.qmake.stash
+
+# Compiled files
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.dylib
+
+# Logs
+*.log
+
+# Temporary files
+*.bak
+*.swp
+*~
+
+# Other system files
+.DS_Store
+Thumbs.db
+

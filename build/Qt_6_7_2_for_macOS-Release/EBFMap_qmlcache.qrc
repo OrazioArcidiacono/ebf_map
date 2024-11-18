@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/">
+        <file alias="EBFMap.qml">../../EBFMap.qml</file>
+        <file alias="marker.png">../../marker.png</file>
+    </qresource>
+</RCC>

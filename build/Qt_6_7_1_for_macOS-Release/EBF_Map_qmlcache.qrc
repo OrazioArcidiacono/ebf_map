@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/">
+        <file alias="EBF_Map.qml">../../EBF_Map.qml</file>
+    </qresource>
+</RCC>
