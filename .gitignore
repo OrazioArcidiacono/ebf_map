@@ -1,5 +1,6 @@
 # Qt build directories
 build-*/
+buld/
 
 # Qt project files
 *.user
