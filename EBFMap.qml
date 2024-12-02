@@ -332,7 +332,11 @@ ApplicationWindow {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        console.log("Suggestion clicked: ", display_name)
+                        console.log("Suggestion clicked: ", JSON.stringify({
+                                            display_name: display_name,
+                                            lat: lat,
+                                            lon: lon
+                                        }, null, 2)); // Mostra il JSON formattato
                         map.center = QtPositioning.coordinate(parseFloat(lat), parseFloat(lon))
                         addMarker(parseFloat(lat), parseFloat(lon)) // Aggiungi il marker alle coordinate selezionate
                         searchField.text = "" // Svuota la barra di ricerca
