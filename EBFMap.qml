@@ -56,6 +56,16 @@ ApplicationWindow {
                     appWindow.clearRouteSignal()
                 }
             }
+            MenuItem {
+                    text: "Simulate Vehicle"
+                    onTriggered: {
+                        if (routeModel.count > 1) {
+                            startSimulation(routeModel);
+                        } else {
+                            console.log("Route is not defined or too short.");
+                        }
+                    }
+                }
         }
     }
 
@@ -238,9 +248,11 @@ ApplicationWindow {
             }
             onStatusChanged: {
                 console.log("RouteModel status changed: ", status)
+                console.log("RouteModel full data:", JSON.stringify(routeModel, null, 2));
                 if (status == RouteModel.Ready) {
                     if (count > 0) {
                         console.log("Route calculation succeeded")
+                        fitRoute(); // Centra e adatta la vista alla rotta
                     } else {
                         console.log("No routes found")
                     }
@@ -267,7 +279,7 @@ ApplicationWindow {
             anchors.fill: parent
             model: routeModel
             delegate: routeDelegate
-            autoFitViewport: true
+            autoFitViewport: false
         }
     }
 
@@ -406,7 +418,6 @@ ApplicationWindow {
 
     // Variabile per il conto alla rovescia
     property int countdownSeconds: 5
-
     // Funzione per aggiornare i suggerimenti
     function updateSuggestions(input) {
         console.log("Updating suggestions for input: ", input)
@@ -548,11 +559,58 @@ ApplicationWindow {
         console.log("Cleared all markers")
     }
 
+    function fitRoute() {
+        if (routeModel.count > 0) {
+            console.log("Starting fitRoute, routeModel count:", routeModel.count);
+
+            var minLat = 90.0;
+            var maxLat = -90.0;
+            var minLon = 180.0;
+            var maxLon = -180.0;
+
+            for (var i = 0; i < routeModel.count; i++) {
+                var routeObject = routeModel.get(i);
+                if (routeObject && routeObject.path) {
+                    console.log("Route path found at index", i, ":", routeObject.path);
+
+                    var path = routeObject.path;
+                    for (var j = 0; j < path.length; j++) {
+                        var coord = path[j];
+                        minLat = Math.min(minLat, coord.latitude);
+                        maxLat = Math.max(maxLat, coord.latitude);
+                        minLon = Math.min(minLon, coord.longitude);
+                        maxLon = Math.max(maxLon, coord.longitude);
+                    }
+                } else {
+                    console.log("No valid path for route at index", i);
+                }
+            }
+
+            var centerLat = (minLat + maxLat) / 2;
+            var centerLon = (minLon + maxLon) / 2;
+            var center = QtPositioning.coordinate(centerLat, centerLon);
+            map.center = center;
+
+            var latDiff = maxLat - minLat;
+            var lonDiff = maxLon - minLon;
+            var maxDiff = Math.max(latDiff, lonDiff);
+
+            // Calcolo dello zoom ridotto
+            var zoom = 14 - Math.log(maxDiff) / Math.log(2); // Riduce l'intensità dello zoom
+            map.zoomLevel = Math.max(1, Math.min(zoom, 17)); // Limita tra 1 e 17
+
+            console.log("Fitted map to route with center: ", center, " and zoom level: ", map.zoomLevel);
+        } else {
+            console.log("No route data to fit");
+        }
+    }
+
     Connections {
         target: appWindow
         function onShowRouteThroughMarkers() {
             console.log("Calculating route through markers")
             if (markerModel.count < 2) {
+                console.log("Not enough markers to calculate a route");
                 clearRoute()
                 return
             }
@@ -562,6 +620,7 @@ ApplicationWindow {
             // Aggiungere waypoint in ordine
             for (var i = 0; i < markerModel.count; i++) {
                 var marker = markerModel.get(i)
+                console.log("Adding waypoint:", marker.latitude, marker.longitude);
                 routeQuery.addWaypoint(QtPositioning.coordinate(marker.latitude, marker.longitude))
             }
 

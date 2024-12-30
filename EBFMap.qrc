@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>EBFMap.qml</file>
         <file>marker.png</file>
+        <file>car.png</file>
     </qresource>
 </RCC>
