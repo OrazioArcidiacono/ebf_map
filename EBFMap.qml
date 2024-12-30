@@ -19,6 +19,9 @@ ApplicationWindow {
     Material.theme: Material.Light
     Material.accent: Material.LightBlue
 
+    // Proprietà per tracciare lo stato della simulazione
+    property string simulationState: "stopped" // Valori: "stopped", "running", "paused"
+
     // Menu bar con opzioni Open, Exit e Clear Route
     menuBar: MenuBar {
         Menu {
@@ -56,17 +59,27 @@ ApplicationWindow {
                     appWindow.clearRouteSignal()
                 }
             }
+        }
+        Menu {
+            title: qsTr("Simulation")
             MenuItem {
-                    text: "Simulate Vehicle"
-                    onTriggered: {
-                        if (routeModel.count > 1) {
-                            startSimulation(routeModel);
-                        } else {
-                            console.log("Route is not defined or too short.");
-                        }
+                text: simulationState === "running" ? "Pause Simulation" :
+                                                      (simulationState === "paused" ? "Resume Simulation" : "Start Simulation")
+                onTriggered: {
+                    if (simulationState === "running") {
+                        pauseSimulation();
+                    } else {
+                        startSimulation(routeModel);
                     }
                 }
+            }
+            MenuItem {
+                text: "Stop Simulation"
+                enabled: simulationState !== "stopped"
+                onTriggered: stopSimulation();
+            }
         }
+
     }
 
     // Plugin per OpenStreetMap
@@ -96,54 +109,68 @@ ApplicationWindow {
             property var lastMousePosition: null
 
             onPressed: (mouse) => {
-                if (mouse.button === Qt.LeftButton) {
-                    console.log("Left mouse button pressed at: ", mouse.x, ", ", mouse.y)
-                    searchField.focus = false
-                    lastMousePosition = Qt.point(mouse.x, mouse.y)
-                }
-            }
+                           if (mouse.button === Qt.LeftButton) {
+                               console.log("Left mouse button pressed at: ", mouse.x, ", ", mouse.y)
+                               searchField.focus = false
+                               lastMousePosition = Qt.point(mouse.x, mouse.y)
+                           }
+                       }
 
             onReleased: (mouse) => {
-                console.log("Mouse button released")
-                lastMousePosition = null
-            }
+                            console.log("Mouse button released")
+                            lastMousePosition = null
+                        }
 
             onPositionChanged: (mouse) => {
-                if (mouse.buttons === Qt.LeftButton && lastMousePosition) {
-                    var deltaX = mouse.x - lastMousePosition.x
-                    var deltaY = mouse.y - lastMousePosition.y
-                    var deltaCoord = map.toCoordinate(Qt.point(map.width / 2 + deltaX, map.height / 2 + deltaY))
-                    map.center = QtPositioning.coordinate(
-                        map.center.latitude + (map.center.latitude - deltaCoord.latitude),
-                        map.center.longitude + (map.center.longitude - deltaCoord.longitude)
-                    )
-                    lastMousePosition = Qt.point(mouse.x, mouse.y)
-                    console.log("Map panned to new center: ", map.center)
-                }
-            }
+                                   if (mouse.buttons === Qt.LeftButton && lastMousePosition) {
+                                       var deltaX = mouse.x - lastMousePosition.x
+                                       var deltaY = mouse.y - lastMousePosition.y
+                                       var deltaCoord = map.toCoordinate(Qt.point(map.width / 2 + deltaX, map.height / 2 + deltaY))
+                                       map.center = QtPositioning.coordinate(
+                                           map.center.latitude + (map.center.latitude - deltaCoord.latitude),
+                                           map.center.longitude + (map.center.longitude - deltaCoord.longitude)
+                                           )
+                                       lastMousePosition = Qt.point(mouse.x, mouse.y)
+                                       console.log("Map panned to new center: ", map.center)
+                                   }
+                               }
 
             onClicked: (mouse) => {
-                if (mouse.button === Qt.RightButton) {
-                    console.log("Right-clicked on map at: ", mouse.x, ", ", mouse.y)
-                    contextMenu.x = mouse.x
-                    contextMenu.y = mouse.y
-                    contextMenu.open()
-                }
-            }
+                           if (mouse.button === Qt.RightButton) {
+                               console.log("Right-clicked on map at: ", mouse.x, ", ", mouse.y)
+                               contextMenu.x = mouse.x
+                               contextMenu.y = mouse.y
+                               contextMenu.open()
+                           }
+                       }
 
             onWheel: (wheel) => {
-                if (wheel.angleDelta.y > 0) {
-                    map.zoomLevel += 1
-                } else if (wheel.angleDelta.y < 0) {
-                    map.zoomLevel -= 1
-                }
-                console.log("Zoom level changed to: ", map.zoomLevel)
-            }
+                         if (wheel.angleDelta.y > 0) {
+                             map.zoomLevel += 1
+                         } else if (wheel.angleDelta.y < 0) {
+                             map.zoomLevel -= 1
+                         }
+                         console.log("Zoom level changed to: ", map.zoomLevel)
+                     }
         }
 
         // Modello per contenere i dati dei marker
         ListModel {
             id: markerModel
+        }
+
+        MapQuickItem {
+            id: vehicle
+            coordinate: QtPositioning.coordinate(0, 0) // Inizialmente fuori mappa
+            visible: false // Sarà visibile solo durante la simulazione
+            anchorPoint.x: carImage.width / 2
+            anchorPoint.y: carImage.height / 2
+            sourceItem: Image {
+                id: carImage
+                source: "qrc:/car.png"
+                width: 30
+                height: 30
+            }
         }
 
         // Vista per visualizzare i marker sulla mappa
@@ -154,6 +181,7 @@ ApplicationWindow {
                 coordinate: QtPositioning.coordinate(latitude, longitude)
                 anchorPoint.x: image.width * 0.5
                 anchorPoint.y: image.height
+                property bool isVehicle: model.isVehicle // Associa la proprietà dal modello
 
                 property real originalX: 0
                 property real originalY: 0
@@ -315,18 +343,18 @@ ApplicationWindow {
                         updateSuggestions(searchField.text)
                     }
                     Keys.onReleased: (event) => {
-                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            console.log("Return/Enter key pressed in search field")
-                            if (suggestionModel.count > 0) {
-                                var suggestion = suggestionModel.get(0)
-                                addMarker(parseFloat(suggestion.lat), parseFloat(suggestion.lon))
-                                searchField.text = "" // Svuota la barra di ricerca
-                                suggestionModel.clear() // Pulisce i suggerimenti
-                            } else {
-                                searchCoordinates(searchField.text)
-                            }
-                        }
-                    }
+                                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                             console.log("Return/Enter key pressed in search field")
+                                             if (suggestionModel.count > 0) {
+                                                 var suggestion = suggestionModel.get(0)
+                                                 addMarker(parseFloat(suggestion.lat), parseFloat(suggestion.lon))
+                                                 searchField.text = "" // Svuota la barra di ricerca
+                                                 suggestionModel.clear() // Pulisce i suggerimenti
+                                             } else {
+                                                 searchCoordinates(searchField.text)
+                                             }
+                                         }
+                                     }
                 }
             }
         }
@@ -345,10 +373,10 @@ ApplicationWindow {
                     anchors.fill: parent
                     onClicked: {
                         console.log("Suggestion clicked: ", JSON.stringify({
-                                            display_name: display_name,
-                                            lat: lat,
-                                            lon: lon
-                                        }, null, 2)); // Mostra il JSON formattato
+                                                                               display_name: display_name,
+                                                                               lat: lat,
+                                                                               lon: lon
+                                                                           }, null, 2)); // Mostra il JSON formattato
                         map.center = QtPositioning.coordinate(parseFloat(lat), parseFloat(lon))
                         addMarker(parseFloat(lat), parseFloat(lon)) // Aggiungi il marker alle coordinate selezionate
                         searchField.text = "" // Svuota la barra di ricerca
@@ -446,10 +474,10 @@ ApplicationWindow {
                     suggestionModel.clear()
                     for (var i = 0; i < response.length && i < 5; i++) {
                         suggestionModel.append({
-                            display_name: response[i].display_name,
-                            lat: response[i].lat,
-                            lon: response[i].lon
-                        })
+                                                   display_name: response[i].display_name,
+                                                   lat: response[i].lat,
+                                                   lon: response[i].lon
+                                               })
                         console.log("Suggestion added: ", response[i].display_name)
                     }
                     retryTimer.stop() // Ferma il timer se la richiesta ha successo
@@ -479,10 +507,10 @@ ApplicationWindow {
 
         // Aggiunge il nuovo marker al modello
         markerModel.append({
-            latitude: latitude,
-            longitude: longitude,
-            title: markerTitle
-        });
+                               latitude: latitude,
+                               longitude: longitude,
+                               title: markerTitle
+                           });
 
         // Centra la mappa sul nuovo marker (opzionale)
         map.center = QtPositioning.coordinate(latitude, longitude);
@@ -595,14 +623,139 @@ ApplicationWindow {
             var lonDiff = maxLon - minLon;
             var maxDiff = Math.max(latDiff, lonDiff);
 
-            // Calcolo dello zoom ridotto
-            var zoom = 14 - Math.log(maxDiff) / Math.log(2); // Riduce l'intensità dello zoom
-            map.zoomLevel = Math.max(1, Math.min(zoom, 17)); // Limita tra 1 e 17
+            // Calcolo del livello di zoom con limiti
+            var zoom = 15 - Math.log(maxDiff) / Math.log(2);
+            map.zoomLevel = Math.max(1, Math.min(zoom, 15)); // Limita il livello di zoom tra 1 e 15
+
 
             console.log("Fitted map to route with center: ", center, " and zoom level: ", map.zoomLevel);
         } else {
             console.log("No route data to fit");
         }
+    }
+
+    // Proprietà per la simulazione
+    property var routePoints: [] // Array di punti sulla rotta
+    property real vehicleSpeed: 50 // Velocità in km/h
+    property int currentIndex: 0 // Indice attuale del veicolo
+
+    Timer {
+        id: simulationTimer
+        interval: 16 // Aggiornamento ogni 16 ms (~60 FPS)
+        repeat: true
+        running: false
+        property real elapsedTime: 0 // Tempo trascorso sul segmento corrente
+        property real segmentDuration: 0 // Durata totale del segmento corrente
+
+        onTriggered: {
+            if (currentIndex < routePoints.length - 1) {
+                let start = routePoints[currentIndex];
+                let end = routePoints[currentIndex + 1];
+
+                if (simulationTimer.elapsedTime >= simulationTimer.segmentDuration) {
+                    // Passa al punto successivo
+                    currentIndex++;
+                    simulationTimer.elapsedTime = 0;
+
+                    if (currentIndex >= routePoints.length - 1) {
+                        vehicle.coordinate = QtPositioning.coordinate(end.latitude, end.longitude);
+                        simulationTimer.stop();
+                        simulationState = "stopped";
+                        console.log("Simulation finished at:", vehicle.coordinate);
+                        return;
+                    }
+
+                    // Calcola la durata del prossimo segmento
+                    start = routePoints[currentIndex];
+                    end = routePoints[currentIndex + 1];
+                    let distance = calculateDistance(start, end); // Distanza in km
+                    simulationTimer.segmentDuration = (distance / vehicleSpeed) * 3600 * 1000; // Durata in ms
+                }
+
+                // Calcola la posizione interpolata
+                simulationTimer.elapsedTime += simulationTimer.interval;
+                let progress = Math.min(simulationTimer.elapsedTime / simulationTimer.segmentDuration, 1.0); // Progressione [0,1]
+                let interpolatedLat = start.latitude + (end.latitude - start.latitude) * progress;
+                let interpolatedLon = start.longitude + (end.longitude - start.longitude) * progress;
+
+                vehicle.coordinate = QtPositioning.coordinate(interpolatedLat, interpolatedLon);
+
+                // Centra la mappa sul veicolo
+                map.center = vehicle.coordinate;
+
+                console.log("Vehicle moving to:", vehicle.coordinate);
+            }
+        }
+    }
+
+    // Funzione per calcolare la distanza tra due punti in km
+    function calculateDistance(start, end) {
+        const R = 6371; // Raggio della Terra in km
+        let dLat = (end.latitude - start.latitude) * Math.PI / 180;
+        let dLon = (end.longitude - start.longitude) * Math.PI / 180;
+
+        let lat1 = start.latitude * Math.PI / 180;
+        let lat2 = end.latitude * Math.PI / 180;
+
+        let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distanza in km
+    }
+
+    // Funzione per avviare la simulazione
+    function startSimulation(routeModel) {
+        routePoints = [];
+        for (let i = 0; i < routeModel.count; i++) {
+            let routeObject = routeModel.get(i);
+            if (routeObject && routeObject.path) {
+                routePoints = routeObject.path; // Salva il percorso
+                console.log("Route path for simulation:", routePoints);
+                break;
+            }
+        }
+
+        if (routePoints.length > 1) {
+            currentIndex = 0;
+            simulationTimer.elapsedTime = 0;
+            vehicle.coordinate = QtPositioning.coordinate(routePoints[0].latitude, routePoints[0].longitude);
+            vehicle.visible = true;
+
+            // Calcola la durata del primo segmento
+            let start = routePoints[0];
+            let end = routePoints[1];
+            let distance = calculateDistance(start, end); // Distanza in km
+            simulationTimer.segmentDuration = (distance / vehicleSpeed) * 3600 * 1000; // Durata in ms
+
+            simulationTimer.start();
+            simulationState = "running";
+            console.log("Simulation started, vehicle at:", vehicle.coordinate);
+        } else {
+            console.log("No valid route for simulation");
+        }
+    }
+
+
+
+    // Funzione per mettere in pausa la simulazione
+    function pauseSimulation() {
+        if (simulationTimer.running) {
+            simulationTimer.stop();
+            simulationState = "paused";
+            console.log("Simulation paused at:", vehicle.coordinate);
+        } else {
+            console.log("Simulation is not running");
+        }
+    }
+
+    // Funzione per fermare completamente la simulazione
+    function stopSimulation() {
+        simulationTimer.stop();
+        vehicle.visible = false;
+        currentIndex = 0; // Resetta l'indice
+        simulationState = "stopped";
+        console.log("Simulation stopped");
     }
 
     Connections {
