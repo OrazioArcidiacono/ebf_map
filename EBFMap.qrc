@@ -1,7 +1,13 @@
 <RCC>
     <qresource prefix="/">
-        <file>EBFMap.qml</file>
         <file>marker.png</file>
         <file>car.png</file>
+        <file>EBFMap.qml</file>
+        <file>Main.qml</file>
+        <file>components/MapView.qml</file>
+        <file>components/MenuBarView.qml</file>
+        <file>controllers/AppController.qml</file>
+        <file>components/SearchBarView.qml</file>
+        <file>components/SimulationManager.qml</file>
     </qresource>
 </RCC>

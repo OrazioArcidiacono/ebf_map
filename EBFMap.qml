@@ -737,7 +737,6 @@ ApplicationWindow {
     }
 
 
-
     // Funzione per mettere in pausa la simulazione
     function pauseSimulation() {
         if (simulationTimer.running) {
