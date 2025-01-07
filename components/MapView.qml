@@ -6,8 +6,6 @@ import QtQuick.Controls 2.15
 Item {
     id: mapView
     anchors.fill: parent
-    signal traceRoute()
-
     // Aggiungi questa proprietà per il controller
     property var controller
 
@@ -281,6 +279,7 @@ Item {
         for (var i = markerModel.count - 1; i >= 0; i--) {
             markerModel.remove(i)
         }
+        clearRoute()
         console.log("Cleared all markers")
     }
 
@@ -314,6 +313,7 @@ Item {
         }
 
         routeModel.update()
+        controller.hasRoute=true
     }
 
     // funzione per gestire lo zoom della mappa dopo il calcolo della rotta

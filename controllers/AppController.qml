@@ -11,6 +11,7 @@ QtObject {
 
     // Stato della simulazione
     property string simulationState: "stopped" // Valori: "stopped", "running", "paused"
+    property bool hasRoute: false // Valore di default: nessuna rotta
 
     // Segnali per aggiornare il menu
     signal simulationStarted()
@@ -31,6 +32,8 @@ QtObject {
 
     function handleClearRoute() {
         console.log("AppController: Clearing route");
+        hasRoute = false; // Nessuna rotta disponibile
+        simulationState = "stopped"; // Resetta la simulazione
         clearRoute();
     }
 
@@ -70,5 +73,10 @@ QtObject {
             console.log("AppController: Simulation stop");
             simulationStopped();
         }
+    }
+
+    function handleRouteAvailable() {
+        hasRoute = true;
+        simulationState = "stopped"; // Torna allo stato di default
     }
 }

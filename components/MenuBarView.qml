@@ -55,7 +55,7 @@ MenuBar {
 
     Menu {
         title: qsTr("Simulation")
-
+        enabled: controller.hasRoute // Abilitato solo se c'è una rotta
         MenuItem {
             text: controller.simulationState === "running" ? qsTr("Pause Simulation") :
                                                              (controller.simulationState === "paused" ? qsTr("Resume Simulation") : qsTr("Start Simulation"))
