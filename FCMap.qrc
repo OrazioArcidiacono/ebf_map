@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>marker.png</file>
         <file>car.png</file>
-        <file>EBFMap.qml</file>
+        <file>FCMap.qml</file>
         <file>Main.qml</file>
         <file>components/MapView.qml</file>
         <file>components/MenuBarView.qml</file>

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fc;
+
+// Definizione del messaggio ServiceAnnounce
+message ServiceAnnounce {
+    // Enumerazione dello stato del servizio
+    enum StatusEnum {
+        UNKNOWN = 0;   // Stato sconosciuto
+        ONLINE = 1;    // Servizio online
+        OFFLINE = 2;   // Servizio offline
+    }
+
+    // Campo principale per lo stato del servizio
+    StatusEnum status = 1;
+}

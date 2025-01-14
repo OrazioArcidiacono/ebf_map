@@ -73,7 +73,7 @@ Item {
 
                 // Se vuoi centrare la mappa sul veicolo:
                 if (mapView) {
-                    console.log("mapView is defined:", mapView);
+                    //console.log("mapView is defined:", mapView);
                     if (mapView.map) {
                         //console.log("map is defined:", mapView.map);
                         mapView.map.center = QtPositioning.coordinate(interpolatedLat, interpolatedLon);

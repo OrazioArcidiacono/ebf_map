@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
 import QtLocation 5.15
 import QtPositioning 5.15
+import fc.proto 1.0
 import "controllers"
 import "components"
 
@@ -11,7 +12,7 @@ ApplicationWindow {
     visible: true
     width: 800
     height: 600
-    title: qsTr("EBF Control Station")
+    title: qsTr("FC Control Station")
 
     Material.theme: Material.Light
     Material.accent: Material.LightBlue
@@ -27,6 +28,15 @@ ApplicationWindow {
         onSimulationPaused: simManager.pauseSimulation()
         onSimulationResumed: simManager.resumeSimulation()
         onSimulationStopped: simManager.stopSimulation()
+    }
+
+    ProtoManager {
+        id: protoManager
+
+        // Funzione con parametro formale per gestire i segnali
+        onMessageGenerated: function(message) {
+            console.log("Messaggio generato:", message);
+        }
     }
 
     // Barra dei menu
@@ -61,5 +71,23 @@ ApplicationWindow {
         vehicleItem: mapView.vehicle
         mapView: mapView                 // Se vuoi centrare la mappa sul veicolo
         vehicleSpeed: 50                 // km/h di default
+    }
+
+    Component.onCompleted: {
+        // Crea un messaggio con ServiceAnnounce ONLINE
+        var onlineMessage = protoManager.createServiceOnlineMessage();
+        console.log("Messaggio Online:", onlineMessage);
+
+        // Crea messaggi multipli
+        var multipleMessages = protoManager.createMultipleMessages();
+        console.log("Messaggi Multipli:", multipleMessages);
+
+        // Legge il messaggio
+        var parsedMessage = protoManager.readMessage(onlineMessage);
+        console.log("Messaggio Deserializzato:", parsedMessage);
+
+        // Leggi i messaggi multipli
+        var parsedMultiMessage = protoManager.readMessage(multipleMessages);
+        console.log("Messaggio Multiplo Deserializzato:\n", parsedMultiMessage);
     }
 }

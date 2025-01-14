@@ -1,0 +1,33 @@
+syntax="proto3";
+package fc;
+
+
+import "FC_Service_Message.proto";
+
+
+
+message FCMessage {
+
+    int64 timestamp = 1; ///The milliseconds since (Jan 1, 1970 00:00:00 UTC) when the message is created. Should come from the system clock of the sender.
+
+    int32 messageId = 2; /// Assigned to each message by the creator, to allow receivers to reply with correlation. Single node clients can use a per application instance global variable that increments with every message, with a range of -2^31-2^31-1. Clients that are clustered should assign a range of messageIds to each node in the cluster, with the full range equally apportioned.
+
+    int32 correlationId = 3; /// Must only be set from the messageId of a received message. If there is not a received message being responded to, do not set any value other than the default. Initiators of interactions should never set correlationId, it is for point to point request/response only.
+
+//	repeated google.protobuf.Any details = 5;
+    repeated FCAny messages = 4 ; /// A repeated set of UconnectAny messages supports embedding one or more feature specific messages into a single MQTT message.
+
+    bytes apiVersionId = 5; /// The global api version to provide guidance to the backend for message routing in a multi-version environment.
+}
+
+/**
+ * The FCAny message Uses OneOf, so only one message can appear per FCAny, the FCAny message is repeatable,
+ * so feature specific messages are decoupled from the top level message.  It is a placeholder to allow a repeated set of extensions.
+ */
+message FCAny {
+	oneof msg {
+        ServiceAnnounce serviceAnnounce = 1;
+	}
+}
+
+

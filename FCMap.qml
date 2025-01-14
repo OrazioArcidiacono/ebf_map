@@ -7,7 +7,7 @@ import QtPositioning 5.15
 ApplicationWindow {
     id: appWindow
     visible: true
-    title: qsTr("EBF Control Station")
+    title: qsTr("FC Control Station")
     width: 800
     height: 600
 

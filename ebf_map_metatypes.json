@@ -1,4 +1,57 @@
 [
     {
+    },
+    {
+        "classes": [
+            {
+                "className": "ProtoManager",
+                "methods": [
+                    {
+                        "access": "public",
+                        "name": "createServiceOnlineMessage",
+                        "returnType": "QString"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "serializedMessage",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "readMessage",
+                        "returnType": "QString"
+                    },
+                    {
+                        "access": "public",
+                        "name": "createMultipleMessages",
+                        "returnType": "QString"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "ProtoManager",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "messageGenerated",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "protomanager.h",
+        "outputRevision": 68
     }
 ]

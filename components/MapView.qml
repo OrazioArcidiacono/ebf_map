@@ -17,6 +17,10 @@ Item {
     Plugin {
         id: mapPlugin
         name: "osm"
+        parameters: [
+                    PluginParameter { name: "osm.mapping.providersrepository.address"; value: "https://tile.openstreetmap.org/" },
+                    PluginParameter { name: "osm.mapping.providersrepository.enabled"; value: true }
+                ]
     }
 
     Map {
