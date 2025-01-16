@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>ProtoFile/FC_Control.proto</file>
         <file>ProtoFile/FC_Service_Message.proto</file>
+        <file>ProtoFile/FC_Route_Message.proto</file>
     </qresource>
 </RCC>

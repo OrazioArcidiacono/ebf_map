@@ -3,6 +3,7 @@
 // headers for FC-Protobuffers
 #include "FC_Control.pb.h"
 #include "FC_Service_Message.pb.h"
+#include "FC_Route_Message.pb.h"
 
 
 namespace ProtoLib {
@@ -16,7 +17,8 @@ typedef ::fc::FCMessage             FCMessageType;              // :: global spa
 typedef ::fc::FCAny                 FCAnyType;
 
 // service messages
-typedef ::fc::ServiceAnnounce        ServiceAnnounceType;
+typedef ::fc::ServiceAnnounce       ServiceAnnounceType;
+typedef ::fc::RouteAnnounce         RouteAnnounceType;
 
 
 } // Messages
@@ -26,6 +28,7 @@ namespace Datatypes {
 
 // protobuffers enumerations
 typedef ::fc::ServiceAnnounce_StatusEnum    ServiceStatusType;
+typedef ::fc::RouteAnnounce::RouteType      RouteType;
 
 } // Datatypes
 
@@ -33,13 +36,14 @@ typedef ::fc::ServiceAnnounce_StatusEnum    ServiceStatusType;
 // return type for the library
 typedef enum : uint8_t {
     RETURN_STATUS_OK
-    , RETURN_STATUS_ERROR
+  , RETURN_STATUS_ERROR
 }ReturnStatus_t;
 
 
 // message type enumeration
 typedef enum : uint8_t {
     MSGT_SERVICE_ANNOUNCE
+  , MSGT_ROUTE_ANNOUNCE
   , MSGT_UNKNOWN
 }FCMessageType_t;
 

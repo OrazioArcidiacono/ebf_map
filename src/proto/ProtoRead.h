@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ProtoDefs.h"
+#include "QtCore/qtpreprocessorsupport.h"
 
 namespace ProtoLib {
 namespace Messages {
@@ -40,6 +41,7 @@ struct MessageReader<MSGT_SERVICE_ANNOUNCE> {
 template <>
 struct MessageReader<MSGT_UNKNOWN> {
     static ReturnStatus_t read(const FCMessageType& p_message, ...) {
+        Q_UNUSED(p_message); // Contrassegna il parametro come inutilizzato
         return RETURN_STATUS_OK;
     }
 };

@@ -12,9 +12,8 @@ QML_IMPORT_PATH = $$PWD
 
 # Specifica le directory delle risorse
 SOURCES += \
-    gen_proto/FC_Control.pb.cc \
-    gen_proto/FC_Service_Message.pb.cc \
-    protomanager.cpp \
+    gen_proto/*.pb.cc \
+    ProtoManager.cpp \
     src/proto/ProtoLib.cpp
 RESOURCES += \
     FCMap.qrc \
@@ -37,7 +36,7 @@ DISTFILES += \
 # Specifica le impostazioni di build
 CONFIG += c++17 qml_debug
 
-#DEFINES += FC_ENABLE_PROTOBUF
+DEFINES += FC_ENABLE_PROTOBUF
 #DEFINES += FC_PROTO_ENABLE_TESTS
 
 # Directory di output
@@ -94,9 +93,8 @@ INCLUDEPATH += /usr/local/include
      /usr/local/Cellar/abseil/20240722.0/lib/libabsl_log_sink.dylib
 
 HEADERS += \
-    gen_proto/FC_Control.pb.h \
-    gen_proto/FC_Service_Message.pb.h \
-    protomanager.h \
+    gen_proto/*.pb.h \
+    ProtoManager.h \
     src/proto/ProtoBuild.h \
     src/proto/ProtoDefs.h \
     src/proto/ProtoLib.h \

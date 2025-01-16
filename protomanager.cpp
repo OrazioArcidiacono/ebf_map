@@ -3,23 +3,27 @@
 #include <QByteArray>
 #include <QString>
 #include <QDebug>
+#include "src/proto/ProtoLib.h"
+
 
 ProtoManager::ProtoManager(QObject *parent) : QObject(parent) {}
 
-QString ProtoManager::createServiceOnlineMessage() {
+QString ProtoManager::createServiceMessage(ProtoLib::Datatypes::ServiceStatusType statusType) {
     fc::FCMessage fcMessage;
 
     // Utilizza CreateMessage per aggiungere un messaggio SERVICE_ANNOUNCE
-    ProtoReturnStatusType res = ProtoMessages::CreateMessage<FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
-        fcMessage, ServiceStatusType::ServiceAnnounce_StatusEnum_ONLINE);
+    ProtoLib::ReturnStatus_t res = ProtoMessages::CreateMessage<ProtoLib::FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
+        fcMessage, statusType);
 
-    if (res != ProtoReturnStatusType::RETURN_STATUS_OK) {
+    if (res != ProtoLib::ReturnStatus_t::RETURN_STATUS_OK) {
         qWarning() << "Errore nella creazione del messaggio.";
         return "";
     }
 
     return serializeFCMessage(fcMessage);
 }
+
+
 
 QString ProtoManager::readMessage(const QString &serializedMessage) {
     fc::FCMessage fcMessage;
@@ -50,16 +54,16 @@ QString ProtoManager::readMessage(const QString &serializedMessage) {
             *newMessage = anyMessage.serviceannounce();
 
             // Legge il messaggio utilizzando ProtoMessages::ReadMessage
-            ServiceStatusType status;
-            ProtoReturnStatusType res = ProtoMessages::ReadMessage<FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
+            ProtoLib::Datatypes::ServiceStatusType status;
+            ProtoLib::ReturnStatus_t res = ProtoMessages::ReadMessage<ProtoLib::FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
                 tempMessage, status);
 
-            if (res != ProtoReturnStatusType::RETURN_STATUS_OK) {
+            if (res != ProtoLib::ReturnStatus_t::RETURN_STATUS_OK) {
                 result += QString("Errore nella lettura del messaggio ServiceAnnounce al messaggio %1.\n").arg(i);
                 continue;
             }
 
-            QString serviceStatus = (status == ServiceStatusType::ServiceAnnounce_StatusEnum_ONLINE)
+            QString serviceStatus = (status == fc::ServiceAnnounce_StatusEnum_ONLINE)
                                         ? "ONLINE"
                                         : "OFFLINE";
             result += QString("ServiceAnnounce trovato nel messaggio %1: Stato = %2\n").arg(i).arg(serviceStatus);
@@ -76,12 +80,12 @@ QString ProtoManager::createMultipleMessages() {
     fc::FCMessage fcMessage;
 
     // Aggiunge un primo messaggio ONLINE
-    ProtoMessages::CreateMessage<FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
-        fcMessage, ServiceStatusType::ServiceAnnounce_StatusEnum_ONLINE);
+    ProtoMessages::CreateMessage<ProtoLib::FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
+        fcMessage, fc::ServiceAnnounce_StatusEnum_ONLINE);
 
     // Aggiunge un secondo messaggio OFFLINE
-    ProtoMessages::CreateMessage<FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
-        fcMessage, ServiceStatusType::ServiceAnnounce_StatusEnum_OFFLINE);
+    ProtoMessages::CreateMessage<ProtoLib::FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
+        fcMessage, fc::ServiceAnnounce_StatusEnum_OFFLINE);
 
     return serializeFCMessage(fcMessage);
 }

@@ -30,6 +30,7 @@
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/unknown_field_set.h"
 #include "FC_Service_Message.pb.h"
+#include "FC_Route_Message.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.
@@ -129,6 +130,7 @@ class FCAny final : public ::google::protobuf::Message
   }
   enum MsgCase {
     kServiceAnnounce = 1,
+    kRouteAnnounce = 2,
     MSG_NOT_SET = 0,
   };
   static inline const FCAny* internal_default_instance() {
@@ -223,6 +225,7 @@ class FCAny final : public ::google::protobuf::Message
   // accessors -------------------------------------------------------
   enum : int {
     kServiceAnnounceFieldNumber = 1,
+    kRouteAnnounceFieldNumber = 2,
   };
   // .fc.ServiceAnnounce serviceAnnounce = 1;
   bool has_serviceannounce() const;
@@ -243,17 +246,37 @@ class FCAny final : public ::google::protobuf::Message
   ::fc::ServiceAnnounce* _internal_mutable_serviceannounce();
 
   public:
+  // .fc.RouteAnnounce routeAnnounce = 2;
+  bool has_routeannounce() const;
+  private:
+  bool _internal_has_routeannounce() const;
+
+  public:
+  void clear_routeannounce() ;
+  const ::fc::RouteAnnounce& routeannounce() const;
+  PROTOBUF_NODISCARD ::fc::RouteAnnounce* release_routeannounce();
+  ::fc::RouteAnnounce* mutable_routeannounce();
+  void set_allocated_routeannounce(::fc::RouteAnnounce* value);
+  void unsafe_arena_set_allocated_routeannounce(::fc::RouteAnnounce* value);
+  ::fc::RouteAnnounce* unsafe_arena_release_routeannounce();
+
+  private:
+  const ::fc::RouteAnnounce& _internal_routeannounce() const;
+  ::fc::RouteAnnounce* _internal_mutable_routeannounce();
+
+  public:
   void clear_msg();
   MsgCase msg_case() const;
   // @@protoc_insertion_point(class_scope:fc.FCAny)
  private:
   class _Internal;
   void set_has_serviceannounce();
+  void set_has_routeannounce();
   inline bool has_msg() const;
   inline void clear_has_msg();
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      0, 1, 1,
+      0, 2, 2,
       0, 2>
       _table_;
 
@@ -275,6 +298,7 @@ class FCAny final : public ::google::protobuf::Message
       constexpr MsgUnion() : _constinit_{} {}
       ::google::protobuf::internal::ConstantInitialized _constinit_;
       ::fc::ServiceAnnounce* serviceannounce_;
+      ::fc::RouteAnnounce* routeannounce_;
     } msg_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::uint32_t _oneof_case_[1];
@@ -783,6 +807,74 @@ inline ::fc::ServiceAnnounce* FCAny::_internal_mutable_serviceannounce() {
 inline ::fc::ServiceAnnounce* FCAny::mutable_serviceannounce() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   ::fc::ServiceAnnounce* _msg = _internal_mutable_serviceannounce();
   // @@protoc_insertion_point(field_mutable:fc.FCAny.serviceAnnounce)
+  return _msg;
+}
+
+// .fc.RouteAnnounce routeAnnounce = 2;
+inline bool FCAny::has_routeannounce() const {
+  return msg_case() == kRouteAnnounce;
+}
+inline bool FCAny::_internal_has_routeannounce() const {
+  return msg_case() == kRouteAnnounce;
+}
+inline void FCAny::set_has_routeannounce() {
+  _impl_._oneof_case_[0] = kRouteAnnounce;
+}
+inline ::fc::RouteAnnounce* FCAny::release_routeannounce() {
+  // @@protoc_insertion_point(field_release:fc.FCAny.routeAnnounce)
+  if (msg_case() == kRouteAnnounce) {
+    clear_has_msg();
+    auto* temp = _impl_.msg_.routeannounce_;
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.msg_.routeannounce_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::fc::RouteAnnounce& FCAny::_internal_routeannounce() const {
+  return msg_case() == kRouteAnnounce ? *_impl_.msg_.routeannounce_ : reinterpret_cast<::fc::RouteAnnounce&>(::fc::_RouteAnnounce_default_instance_);
+}
+inline const ::fc::RouteAnnounce& FCAny::routeannounce() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:fc.FCAny.routeAnnounce)
+  return _internal_routeannounce();
+}
+inline ::fc::RouteAnnounce* FCAny::unsafe_arena_release_routeannounce() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:fc.FCAny.routeAnnounce)
+  if (msg_case() == kRouteAnnounce) {
+    clear_has_msg();
+    auto* temp = _impl_.msg_.routeannounce_;
+    _impl_.msg_.routeannounce_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void FCAny::unsafe_arena_set_allocated_routeannounce(::fc::RouteAnnounce* value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_msg();
+  if (value) {
+    set_has_routeannounce();
+    _impl_.msg_.routeannounce_ = value;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fc.FCAny.routeAnnounce)
+}
+inline ::fc::RouteAnnounce* FCAny::_internal_mutable_routeannounce() {
+  if (msg_case() != kRouteAnnounce) {
+    clear_msg();
+    set_has_routeannounce();
+    _impl_.msg_.routeannounce_ =
+        ::google::protobuf::Message::DefaultConstruct<::fc::RouteAnnounce>(GetArena());
+  }
+  return _impl_.msg_.routeannounce_;
+}
+inline ::fc::RouteAnnounce* FCAny::mutable_routeannounce() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::fc::RouteAnnounce* _msg = _internal_mutable_routeannounce();
+  // @@protoc_insertion_point(field_mutable:fc.FCAny.routeAnnounce)
   return _msg;
 }
 

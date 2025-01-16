@@ -74,20 +74,29 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        // Crea un messaggio con ServiceAnnounce ONLINE
-        var onlineMessage = protoManager.createServiceOnlineMessage();
+        // Crea un messaggio con lo stato ONLINE
+        var onlineMessage = protoManager.createServiceMessage(ProtoManager.SERVICE_STATUS_ONLINE);
         console.log("Messaggio Online:", onlineMessage);
 
-        // Crea messaggi multipli
-        var multipleMessages = protoManager.createMultipleMessages();
-        console.log("Messaggi Multipli:", multipleMessages);
+//        // Crea messaggi multipli
+//        var multipleMessages = protoManager.createMultipleMessages();
+//        console.log("Messaggi Multipli:", multipleMessages);
 
         // Legge il messaggio
-        var parsedMessage = protoManager.readMessage(onlineMessage);
-        console.log("Messaggio Deserializzato:", parsedMessage);
+        var parsedOnlineMessage = protoManager.readMessage(onlineMessage);
+        console.log("Messaggio Deserializzato:", parsedOnlineMessage);
 
-        // Leggi i messaggi multipli
-        var parsedMultiMessage = protoManager.readMessage(multipleMessages);
-        console.log("Messaggio Multiplo Deserializzato:\n", parsedMultiMessage);
+//        // Leggi i messaggi multipli
+//        var parsedMultiMessage = protoManager.readMessage(multipleMessages);
+//        console.log("Messaggio Multiplo Deserializzato:\n", parsedMultiMessage);
+    }
+    Component.onDestruction: {
+        // Crea un messaggio con lo stato OFFLINE
+        var offlineMessage = protoManager.createServiceMessage(ProtoManager.SERVICE_STATUS_OFFLINE);
+        console.log("Messaggio Offline:", offlineMessage);
+
+        // Legge il messaggio
+        var parsedOfflineMessage = protoManager.readMessage(offlineMessage);
+        console.log("Messaggio Deserializzato:", parsedOfflineMessage);
     }
 }

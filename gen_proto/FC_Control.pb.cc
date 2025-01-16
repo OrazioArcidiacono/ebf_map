@@ -112,6 +112,7 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         ::_pbi::kInvalidFieldOffsetTag,
+        ::_pbi::kInvalidFieldOffsetTag,
         PROTOBUF_FIELD_OFFSET(::fc::FCAny, _impl_.msg_),
 };
 
@@ -127,27 +128,29 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_FC_5fControl_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
     "\n\020FC_Control.proto\022\002fc\032\030FC_Service_Messa"
-    "ge.proto\"{\n\tFCMessage\022\021\n\ttimestamp\030\001 \001(\003"
-    "\022\021\n\tmessageId\030\002 \001(\005\022\025\n\rcorrelationId\030\003 \001"
-    "(\005\022\033\n\010messages\030\004 \003(\0132\t.fc.FCAny\022\024\n\014apiVe"
-    "rsionId\030\005 \001(\014\">\n\005FCAny\022.\n\017serviceAnnounc"
-    "e\030\001 \001(\0132\023.fc.ServiceAnnounceH\000B\005\n\003msgb\006p"
-    "roto3"
+    "ge.proto\032\026FC_Route_Message.proto\"{\n\tFCMe"
+    "ssage\022\021\n\ttimestamp\030\001 \001(\003\022\021\n\tmessageId\030\002 "
+    "\001(\005\022\025\n\rcorrelationId\030\003 \001(\005\022\033\n\010messages\030\004"
+    " \003(\0132\t.fc.FCAny\022\024\n\014apiVersionId\030\005 \001(\014\"j\n"
+    "\005FCAny\022.\n\017serviceAnnounce\030\001 \001(\0132\023.fc.Ser"
+    "viceAnnounceH\000\022*\n\rrouteAnnounce\030\002 \001(\0132\021."
+    "fc.RouteAnnounceH\000B\005\n\003msgb\006proto3"
 };
-static const ::_pbi::DescriptorTable* const descriptor_table_FC_5fControl_2eproto_deps[1] =
+static const ::_pbi::DescriptorTable* const descriptor_table_FC_5fControl_2eproto_deps[2] =
     {
+        &::descriptor_table_FC_5fRoute_5fMessage_2eproto,
         &::descriptor_table_FC_5fService_5fMessage_2eproto,
 };
 static ::absl::once_flag descriptor_table_FC_5fControl_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_FC_5fControl_2eproto = {
     false,
     false,
-    245,
+    313,
     descriptor_table_protodef_FC_5fControl_2eproto,
     "FC_Control.proto",
     &descriptor_table_FC_5fControl_2eproto_once,
     descriptor_table_FC_5fControl_2eproto_deps,
-    1,
+    2,
     2,
     schemas,
     file_default_instances,
@@ -547,6 +550,30 @@ void FCAny::clear_serviceannounce() {
     clear_has_msg();
   }
 }
+void FCAny::set_allocated_routeannounce(::fc::RouteAnnounce* routeannounce) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_msg();
+  if (routeannounce) {
+    ::google::protobuf::Arena* submessage_arena = reinterpret_cast<::google::protobuf::MessageLite*>(routeannounce)->GetArena();
+    if (message_arena != submessage_arena) {
+      routeannounce = ::google::protobuf::internal::GetOwnedMessage(message_arena, routeannounce, submessage_arena);
+    }
+    set_has_routeannounce();
+    _impl_.msg_.routeannounce_ = routeannounce;
+  }
+  // @@protoc_insertion_point(field_set_allocated:fc.FCAny.routeAnnounce)
+}
+void FCAny::clear_routeannounce() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (msg_case() == kRouteAnnounce) {
+    if (GetArena() == nullptr) {
+      delete _impl_.msg_.routeannounce_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.msg_.routeannounce_);
+    }
+    clear_has_msg();
+  }
+}
 FCAny::FCAny(::google::protobuf::Arena* arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
@@ -581,6 +608,9 @@ FCAny::FCAny(
       break;
       case kServiceAnnounce:
         _impl_.msg_.serviceannounce_ = ::google::protobuf::Message::CopyConstruct<::fc::ServiceAnnounce>(arena, *from._impl_.msg_.serviceannounce_);
+        break;
+      case kRouteAnnounce:
+        _impl_.msg_.routeannounce_ = ::google::protobuf::Message::CopyConstruct<::fc::RouteAnnounce>(arena, *from._impl_.msg_.routeannounce_);
         break;
   }
 
@@ -619,6 +649,14 @@ void FCAny::clear_msg() {
         delete _impl_.msg_.serviceannounce_;
       } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
         ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.msg_.serviceannounce_);
+      }
+      break;
+    }
+    case kRouteAnnounce: {
+      if (GetArena() == nullptr) {
+        delete _impl_.msg_.routeannounce_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.msg_.routeannounce_);
       }
       break;
     }
@@ -666,16 +704,16 @@ const ::google::protobuf::internal::ClassData* FCAny::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 1, 0, 2> FCAny::_table_ = {
+const ::_pbi::TcParseTable<0, 2, 2, 0, 2> FCAny::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    1, 0,  // max_field_number, fast_idx_mask
+    2, 0,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967294,  // skipmap
+    4294967292,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    1,  // num_field_entries
-    1,  // num_aux_entries
+    2,  // num_field_entries
+    2,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
     nullptr,  // post_loop_handler
@@ -691,8 +729,12 @@ const ::_pbi::TcParseTable<0, 1, 1, 0, 2> FCAny::_table_ = {
     // .fc.ServiceAnnounce serviceAnnounce = 1;
     {PROTOBUF_FIELD_OFFSET(FCAny, _impl_.msg_.serviceannounce_), _Internal::kOneofCaseOffset + 0, 0,
     (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+    // .fc.RouteAnnounce routeAnnounce = 2;
+    {PROTOBUF_FIELD_OFFSET(FCAny, _impl_.msg_.routeannounce_), _Internal::kOneofCaseOffset + 0, 1,
+    (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
   }}, {{
     {::_pbi::TcParser::GetTable<::fc::ServiceAnnounce>()},
+    {::_pbi::TcParser::GetTable<::fc::RouteAnnounce>()},
   }}, {{
   }},
 };
@@ -723,13 +765,22 @@ PROTOBUF_NOINLINE void FCAny::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // .fc.ServiceAnnounce serviceAnnounce = 1;
-          if (this_.msg_case() == kServiceAnnounce) {
-            target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
-                1, *this_._impl_.msg_.serviceannounce_, this_._impl_.msg_.serviceannounce_->GetCachedSize(), target,
-                stream);
+          switch (this_.msg_case()) {
+            case kServiceAnnounce: {
+              target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+                  1, *this_._impl_.msg_.serviceannounce_, this_._impl_.msg_.serviceannounce_->GetCachedSize(), target,
+                  stream);
+              break;
+            }
+            case kRouteAnnounce: {
+              target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+                  2, *this_._impl_.msg_.routeannounce_, this_._impl_.msg_.routeannounce_->GetCachedSize(), target,
+                  stream);
+              break;
+            }
+            default:
+              break;
           }
-
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
             target =
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -758,6 +809,12 @@ PROTOBUF_NOINLINE void FCAny::Clear() {
             case kServiceAnnounce: {
               total_size += 1 +
                             ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.msg_.serviceannounce_);
+              break;
+            }
+            // .fc.RouteAnnounce routeAnnounce = 2;
+            case kRouteAnnounce: {
+              total_size += 1 +
+                            ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.msg_.routeannounce_);
               break;
             }
             case MSG_NOT_SET: {
@@ -794,6 +851,15 @@ void FCAny::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::p
               ::google::protobuf::Message::CopyConstruct<::fc::ServiceAnnounce>(arena, *from._impl_.msg_.serviceannounce_);
         } else {
           _this->_impl_.msg_.serviceannounce_->MergeFrom(from._internal_serviceannounce());
+        }
+        break;
+      }
+      case kRouteAnnounce: {
+        if (oneof_needs_init) {
+          _this->_impl_.msg_.routeannounce_ =
+              ::google::protobuf::Message::CopyConstruct<::fc::RouteAnnounce>(arena, *from._impl_.msg_.routeannounce_);
+        } else {
+          _this->_impl_.msg_.routeannounce_->MergeFrom(from._internal_routeannounce());
         }
         break;
       }

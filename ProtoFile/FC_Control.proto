@@ -1,10 +1,8 @@
 syntax="proto3";
 package fc;
 
-
 import "FC_Service_Message.proto";
-
-
+import "FC_Route_Message.proto";
 
 message FCMessage {
 
@@ -27,6 +25,7 @@ message FCMessage {
 message FCAny {
 	oneof msg {
         ServiceAnnounce serviceAnnounce = 1;
+        RouteAnnounce routeAnnounce = 2 ;
 	}
 }
 
