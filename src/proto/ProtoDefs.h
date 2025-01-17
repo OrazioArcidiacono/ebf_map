@@ -28,7 +28,7 @@ namespace Datatypes {
 
 // protobuffers enumerations
 typedef ::fc::ServiceAnnounce_StatusEnum    ServiceStatusType;
-typedef ::fc::RouteAnnounce::RouteType      RouteType;
+typedef ::fc::RouteTypeEnum   RouteType;
 
 } // Datatypes
 

@@ -8,6 +8,7 @@ QtObject {
     signal traceRoute()
     signal clearRoute()
     signal clearMarkers()
+    signal availableRoute()
 
     // Stato della simulazione
     property string simulationState: "stopped" // Valori: "stopped", "running", "paused"
@@ -75,8 +76,10 @@ QtObject {
         }
     }
 
-    function handleRouteAvailable() {
+    function handleAvailableRoute() {
+        console.log("AppController: Route is available");
         hasRoute = true;
         simulationState = "stopped"; // Torna allo stato di default
     }
+
 }

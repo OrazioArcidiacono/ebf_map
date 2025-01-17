@@ -66,71 +66,38 @@ namespace protobuf {
 }  // namespace google
 
 namespace fc {
-enum RouteAnnounce_RouteType : int {
-  RouteAnnounce_RouteType_ROUTE = 0,
-  RouteAnnounce_RouteType_POSITION = 1,
-  RouteAnnounce_RouteType_RouteAnnounce_RouteType_INT_MIN_SENTINEL_DO_NOT_USE_ =
-      std::numeric_limits<::int32_t>::min(),
-  RouteAnnounce_RouteType_RouteAnnounce_RouteType_INT_MAX_SENTINEL_DO_NOT_USE_ =
-      std::numeric_limits<::int32_t>::max(),
-};
-
-bool RouteAnnounce_RouteType_IsValid(int value);
-extern const uint32_t RouteAnnounce_RouteType_internal_data_[];
-constexpr RouteAnnounce_RouteType RouteAnnounce_RouteType_RouteType_MIN = static_cast<RouteAnnounce_RouteType>(0);
-constexpr RouteAnnounce_RouteType RouteAnnounce_RouteType_RouteType_MAX = static_cast<RouteAnnounce_RouteType>(1);
-constexpr int RouteAnnounce_RouteType_RouteType_ARRAYSIZE = 1 + 1;
-const ::google::protobuf::EnumDescriptor*
-RouteAnnounce_RouteType_descriptor();
-template <typename T>
-const std::string& RouteAnnounce_RouteType_Name(T value) {
-  static_assert(std::is_same<T, RouteAnnounce_RouteType>::value ||
-                    std::is_integral<T>::value,
-                "Incorrect type passed to RouteType_Name().");
-  return RouteAnnounce_RouteType_Name(static_cast<RouteAnnounce_RouteType>(value));
-}
-template <>
-inline const std::string& RouteAnnounce_RouteType_Name(RouteAnnounce_RouteType value) {
-  return ::google::protobuf::internal::NameOfDenseEnum<RouteAnnounce_RouteType_descriptor,
-                                                 0, 1>(
-      static_cast<int>(value));
-}
-inline bool RouteAnnounce_RouteType_Parse(absl::string_view name, RouteAnnounce_RouteType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<RouteAnnounce_RouteType>(
-      RouteAnnounce_RouteType_descriptor(), name, value);
-}
-enum RouteType : int {
+enum RouteTypeEnum : int {
   ROUTE = 0,
   POSITION = 1,
-  RouteType_INT_MIN_SENTINEL_DO_NOT_USE_ =
+  RouteTypeEnum_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
-  RouteType_INT_MAX_SENTINEL_DO_NOT_USE_ =
+  RouteTypeEnum_INT_MAX_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::max(),
 };
 
-bool RouteType_IsValid(int value);
-extern const uint32_t RouteType_internal_data_[];
-constexpr RouteType RouteType_MIN = static_cast<RouteType>(0);
-constexpr RouteType RouteType_MAX = static_cast<RouteType>(1);
-constexpr int RouteType_ARRAYSIZE = 1 + 1;
+bool RouteTypeEnum_IsValid(int value);
+extern const uint32_t RouteTypeEnum_internal_data_[];
+constexpr RouteTypeEnum RouteTypeEnum_MIN = static_cast<RouteTypeEnum>(0);
+constexpr RouteTypeEnum RouteTypeEnum_MAX = static_cast<RouteTypeEnum>(1);
+constexpr int RouteTypeEnum_ARRAYSIZE = 1 + 1;
 const ::google::protobuf::EnumDescriptor*
-RouteType_descriptor();
+RouteTypeEnum_descriptor();
 template <typename T>
-const std::string& RouteType_Name(T value) {
-  static_assert(std::is_same<T, RouteType>::value ||
+const std::string& RouteTypeEnum_Name(T value) {
+  static_assert(std::is_same<T, RouteTypeEnum>::value ||
                     std::is_integral<T>::value,
-                "Incorrect type passed to RouteType_Name().");
-  return RouteType_Name(static_cast<RouteType>(value));
+                "Incorrect type passed to RouteTypeEnum_Name().");
+  return RouteTypeEnum_Name(static_cast<RouteTypeEnum>(value));
 }
 template <>
-inline const std::string& RouteType_Name(RouteType value) {
-  return ::google::protobuf::internal::NameOfDenseEnum<RouteType_descriptor,
+inline const std::string& RouteTypeEnum_Name(RouteTypeEnum value) {
+  return ::google::protobuf::internal::NameOfDenseEnum<RouteTypeEnum_descriptor,
                                                  0, 1>(
       static_cast<int>(value));
 }
-inline bool RouteType_Parse(absl::string_view name, RouteType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<RouteType>(
-      RouteType_descriptor(), name, value);
+inline bool RouteTypeEnum_Parse(absl::string_view name, RouteTypeEnum* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<RouteTypeEnum>(
+      RouteTypeEnum_descriptor(), name, value);
 }
 
 // ===================================================================
@@ -284,11 +251,29 @@ class RoutePoint final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
+    kNameFieldNumber = 6,
     kLatitudeFieldNumber = 1,
     kLongitudeFieldNumber = 2,
     kTimestampFieldNumber = 3,
     kSpeedFieldNumber = 4,
+    kTypeFieldNumber = 5,
   };
+  // string name = 6;
+  void clear_name() ;
+  const std::string& name() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_name(Arg_&& arg, Args_... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* value);
+
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(
+      const std::string& value);
+  std::string* _internal_mutable_name();
+
+  public:
   // double latitude = 1;
   void clear_latitude() ;
   double latitude() const;
@@ -329,13 +314,23 @@ class RoutePoint final : public ::google::protobuf::Message
   void _internal_set_speed(double value);
 
   public:
+  // .fc.RouteTypeEnum type = 5;
+  void clear_type() ;
+  ::fc::RouteTypeEnum type() const;
+  void set_type(::fc::RouteTypeEnum value);
+
+  private:
+  ::fc::RouteTypeEnum _internal_type() const;
+  void _internal_set_type(::fc::RouteTypeEnum value);
+
+  public:
   // @@protoc_insertion_point(class_scope:fc.RoutePoint)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 4, 0,
-      0, 2>
+      3, 6, 0,
+      26, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -352,10 +347,12 @@ class RoutePoint final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const RoutePoint& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr name_;
     double latitude_;
     double longitude_;
     ::int64_t timestamp_;
     double speed_;
+    int type_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -507,30 +504,12 @@ class RouteAnnounce final : public ::google::protobuf::Message
  public:
   ::google::protobuf::Metadata GetMetadata() const;
   // nested types ----------------------------------------------------
-  using RouteType = RouteAnnounce_RouteType;
-  static constexpr RouteType ROUTE = RouteAnnounce_RouteType_ROUTE;
-  static constexpr RouteType POSITION = RouteAnnounce_RouteType_POSITION;
-  static inline bool RouteType_IsValid(int value) {
-    return RouteAnnounce_RouteType_IsValid(value);
-  }
-  static constexpr RouteType RouteType_MIN = RouteAnnounce_RouteType_RouteType_MIN;
-  static constexpr RouteType RouteType_MAX = RouteAnnounce_RouteType_RouteType_MAX;
-  static constexpr int RouteType_ARRAYSIZE = RouteAnnounce_RouteType_RouteType_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor* RouteType_descriptor() {
-    return RouteAnnounce_RouteType_descriptor();
-  }
-  template <typename T>
-  static inline const std::string& RouteType_Name(T value) {
-    return RouteAnnounce_RouteType_Name(value);
-  }
-  static inline bool RouteType_Parse(absl::string_view name, RouteType* value) {
-    return RouteAnnounce_RouteType_Parse(name, value);
-  }
 
   // accessors -------------------------------------------------------
   enum : int {
     kPointsFieldNumber = 3,
     kRouteIdFieldNumber = 1,
+    kDescriptionFieldNumber = 4,
     kTypeFieldNumber = 2,
   };
   // repeated .fc.RoutePoint points = 3;
@@ -566,14 +545,30 @@ class RouteAnnounce final : public ::google::protobuf::Message
   std::string* _internal_mutable_route_id();
 
   public:
-  // .fc.RouteAnnounce.RouteType type = 2;
-  void clear_type() ;
-  ::fc::RouteAnnounce_RouteType type() const;
-  void set_type(::fc::RouteAnnounce_RouteType value);
+  // string description = 4;
+  void clear_description() ;
+  const std::string& description() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_description(Arg_&& arg, Args_... args);
+  std::string* mutable_description();
+  PROTOBUF_NODISCARD std::string* release_description();
+  void set_allocated_description(std::string* value);
 
   private:
-  ::fc::RouteAnnounce_RouteType _internal_type() const;
-  void _internal_set_type(::fc::RouteAnnounce_RouteType value);
+  const std::string& _internal_description() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_description(
+      const std::string& value);
+  std::string* _internal_mutable_description();
+
+  public:
+  // .fc.RouteTypeEnum type = 2;
+  void clear_type() ;
+  ::fc::RouteTypeEnum type() const;
+  void set_type(::fc::RouteTypeEnum value);
+
+  private:
+  ::fc::RouteTypeEnum _internal_type() const;
+  void _internal_set_type(::fc::RouteTypeEnum value);
 
   public:
   // @@protoc_insertion_point(class_scope:fc.RouteAnnounce)
@@ -581,8 +576,8 @@ class RouteAnnounce final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 1,
-      33, 2>
+      2, 4, 1,
+      44, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -601,6 +596,7 @@ class RouteAnnounce final : public ::google::protobuf::Message
                           const RouteAnnounce& from_msg);
     ::google::protobuf::RepeatedPtrField< ::fc::RoutePoint > points_;
     ::google::protobuf::internal::ArenaStringPtr route_id_;
+    ::google::protobuf::internal::ArenaStringPtr description_;
     int type_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -713,6 +709,76 @@ inline void RoutePoint::_internal_set_speed(double value) {
   _impl_.speed_ = value;
 }
 
+// .fc.RouteTypeEnum type = 5;
+inline void RoutePoint::clear_type() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_ = 0;
+}
+inline ::fc::RouteTypeEnum RoutePoint::type() const {
+  // @@protoc_insertion_point(field_get:fc.RoutePoint.type)
+  return _internal_type();
+}
+inline void RoutePoint::set_type(::fc::RouteTypeEnum value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:fc.RoutePoint.type)
+}
+inline ::fc::RouteTypeEnum RoutePoint::_internal_type() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::fc::RouteTypeEnum>(_impl_.type_);
+}
+inline void RoutePoint::_internal_set_type(::fc::RouteTypeEnum value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.type_ = value;
+}
+
+// string name = 6;
+inline void RoutePoint::clear_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.ClearToEmpty();
+}
+inline const std::string& RoutePoint::name() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:fc.RoutePoint.name)
+  return _internal_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RoutePoint::set_name(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:fc.RoutePoint.name)
+}
+inline std::string* RoutePoint::mutable_name() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:fc.RoutePoint.name)
+  return _s;
+}
+inline const std::string& RoutePoint::_internal_name() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.name_.Get();
+}
+inline void RoutePoint::_internal_set_name(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.Set(value, GetArena());
+}
+inline std::string* RoutePoint::_internal_mutable_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.name_.Mutable( GetArena());
+}
+inline std::string* RoutePoint::release_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:fc.RoutePoint.name)
+  return _impl_.name_.Release();
+}
+inline void RoutePoint::set_allocated_name(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:fc.RoutePoint.name)
+}
+
 // -------------------------------------------------------------------
 
 // RouteAnnounce
@@ -765,24 +831,24 @@ inline void RouteAnnounce::set_allocated_route_id(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:fc.RouteAnnounce.route_id)
 }
 
-// .fc.RouteAnnounce.RouteType type = 2;
+// .fc.RouteTypeEnum type = 2;
 inline void RouteAnnounce::clear_type() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.type_ = 0;
 }
-inline ::fc::RouteAnnounce_RouteType RouteAnnounce::type() const {
+inline ::fc::RouteTypeEnum RouteAnnounce::type() const {
   // @@protoc_insertion_point(field_get:fc.RouteAnnounce.type)
   return _internal_type();
 }
-inline void RouteAnnounce::set_type(::fc::RouteAnnounce_RouteType value) {
+inline void RouteAnnounce::set_type(::fc::RouteTypeEnum value) {
   _internal_set_type(value);
   // @@protoc_insertion_point(field_set:fc.RouteAnnounce.type)
 }
-inline ::fc::RouteAnnounce_RouteType RouteAnnounce::_internal_type() const {
+inline ::fc::RouteTypeEnum RouteAnnounce::_internal_type() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return static_cast<::fc::RouteAnnounce_RouteType>(_impl_.type_);
+  return static_cast<::fc::RouteTypeEnum>(_impl_.type_);
 }
-inline void RouteAnnounce::_internal_set_type(::fc::RouteAnnounce_RouteType value) {
+inline void RouteAnnounce::_internal_set_type(::fc::RouteTypeEnum value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.type_ = value;
 }
@@ -836,6 +902,54 @@ RouteAnnounce::_internal_mutable_points() {
   return &_impl_.points_;
 }
 
+// string description = 4;
+inline void RouteAnnounce::clear_description() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.description_.ClearToEmpty();
+}
+inline const std::string& RouteAnnounce::description() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:fc.RouteAnnounce.description)
+  return _internal_description();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RouteAnnounce::set_description(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.description_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:fc.RouteAnnounce.description)
+}
+inline std::string* RouteAnnounce::mutable_description() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_description();
+  // @@protoc_insertion_point(field_mutable:fc.RouteAnnounce.description)
+  return _s;
+}
+inline const std::string& RouteAnnounce::_internal_description() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.description_.Get();
+}
+inline void RouteAnnounce::_internal_set_description(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.description_.Set(value, GetArena());
+}
+inline std::string* RouteAnnounce::_internal_mutable_description() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.description_.Mutable( GetArena());
+}
+inline std::string* RouteAnnounce::release_description() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:fc.RouteAnnounce.description)
+  return _impl_.description_.Release();
+}
+inline void RouteAnnounce::set_allocated_description(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.description_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.description_.IsDefault()) {
+    _impl_.description_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:fc.RouteAnnounce.description)
+}
+
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif  // __GNUC__
@@ -848,16 +962,10 @@ namespace google {
 namespace protobuf {
 
 template <>
-struct is_proto_enum<::fc::RouteAnnounce_RouteType> : std::true_type {};
+struct is_proto_enum<::fc::RouteTypeEnum> : std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor<::fc::RouteAnnounce_RouteType>() {
-  return ::fc::RouteAnnounce_RouteType_descriptor();
-}
-template <>
-struct is_proto_enum<::fc::RouteType> : std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor<::fc::RouteType>() {
-  return ::fc::RouteType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor<::fc::RouteTypeEnum>() {
+  return ::fc::RouteTypeEnum_descriptor();
 }
 
 }  // namespace protobuf

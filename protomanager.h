@@ -4,9 +4,11 @@
 #include <QObject>
 #include "gen_proto/FC_Control.pb.h"       // Include generato da Protocol Buffers
 
+
 class ProtoManager : public QObject {
     Q_OBJECT
     Q_ENUMS(ServiceStatusType)
+    Q_ENUMS(RouteType)
 
 public:
     explicit ProtoManager(QObject *parent = nullptr);
@@ -17,8 +19,13 @@ public:
         SERVICE_STATUS_OFFLINE = fc::ServiceAnnounce_StatusEnum_OFFLINE
     };
 
-    // Crea un messaggio FCMessage con un ServiceAnnounce impostato su ONLINE
-    Q_INVOKABLE QString createServiceMessage(fc::ServiceAnnounce::StatusEnum statusType);
+    enum RouteType {
+        ROUTE_JSON = fc::RouteTypeEnum::ROUTE,
+        POSITION = fc::RouteTypeEnum::POSITION
+    };
+
+    // Crea un messaggio FCMessage con un ServiceAnnounce
+    Q_INVOKABLE QString createServiceMessage(ServiceStatusType statusType);
 
     // Legge un messaggio FCMessage serializzato
     Q_INVOKABLE QString readMessage(const QString &serializedMessage);
@@ -26,8 +33,8 @@ public:
     // Crea messaggi multipli
     Q_INVOKABLE QString createMultipleMessages();
 
-    // Metodo per ricevere una rotta completa da QML
-   // Q_INVOKABLE void setRoute(const QString &routeId, const QString &description, const QVariantList &points);
+    // Metodo per creare un messaggio RouteAnnounce
+    Q_INVOKABLE QString createRouteAnnounceMessage(RouteType routeType, const QString &jsonString);
 
 signals:
     // Segnale per notificare la creazione di un messaggio

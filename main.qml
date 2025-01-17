@@ -61,6 +61,7 @@ ApplicationWindow {
         id: mapView
         anchors.topMargin: mainMenuBar.height // Imposto un margine per evitare sovrapposizioni con MenuBarView
         controller: appController // Passa il controller
+        onCompletedRoute: appController.availableRoute()
     }
 
     SimulationManager {

@@ -14,6 +14,9 @@ Item {
     property alias vehicle: vehicle
     // Espone l'oggetto `Map` come proprietà
     property alias map: map
+
+    signal completedRoute()
+
     Plugin {
         id: mapPlugin
         name: "osm"
@@ -209,7 +212,12 @@ Item {
             }
             onStatusChanged: {
                 console.log("RouteModel status changed: ", status)
-                console.log("RouteModel full data:", JSON.stringify(routeModel, null, 2));
+                //console.log("RouteModel full data:", JSON.stringify(routeModel, null, 2));
+                // Ottieni il JSON completo del RouteModel
+                var routeJson = JSON.stringify(routeModel, null, 2);
+                // Emetti il segnale con il JSON della rotta
+                mapView.routeCompleted(routeJson);
+
                 if (status == RouteModel.Ready) {
                     if (count > 0) {
                         console.log("Route calculation succeeded")

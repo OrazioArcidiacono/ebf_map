@@ -5,15 +5,22 @@
 #include <QDebug>
 #include "src/proto/ProtoLib.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
 
 ProtoManager::ProtoManager(QObject *parent) : QObject(parent) {}
 
-QString ProtoManager::createServiceMessage(ProtoLib::Datatypes::ServiceStatusType statusType) {
+QString ProtoManager::createServiceMessage(ServiceStatusType statusType) {
     fc::FCMessage fcMessage;
 
     // Utilizza CreateMessage per aggiungere un messaggio SERVICE_ANNOUNCE
-    ProtoLib::ReturnStatus_t res = ProtoMessages::CreateMessage<ProtoLib::FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
-        fcMessage, statusType);
+    ProtoLib::ReturnStatus_t res = ProtoMessages::CreateMessage<
+        ProtoLib::FCMessageType_t::MSGT_SERVICE_ANNOUNCE>(
+        fcMessage,
+        static_cast<fc::ServiceAnnounce_StatusEnum>(statusType) // Conversione esplicita
+        );
 
     if (res != ProtoLib::ReturnStatus_t::RETURN_STATUS_OK) {
         qWarning() << "Errore nella creazione del messaggio.";
@@ -67,6 +74,27 @@ QString ProtoManager::readMessage(const QString &serializedMessage) {
                                         ? "ONLINE"
                                         : "OFFLINE";
             result += QString("ServiceAnnounce trovato nel messaggio %1: Stato = %2\n").arg(i).arg(serviceStatus);
+        }
+
+        // Gestione RouteAnnounce
+        else if (anyMessage.has_routeannounce()) {
+            const auto &routeAnnounce = anyMessage.routeannounce();
+            result += QString("RouteAnnounce trovato nel messaggio %1:\n").arg(i);
+            result += QString("  Route ID: %1\n").arg(QString::fromStdString(routeAnnounce.route_id()));
+            result += QString("  Descrizione: %1\n").arg(QString::fromStdString(routeAnnounce.description()));
+            result += QString("  Tipo: %1\n").arg(routeAnnounce.type() == fc::ROUTE ? "ROUTE" : "POSITION");
+
+            // Itera sui punti
+            for (int j = 0; j < routeAnnounce.points_size(); ++j) {
+                const auto &point = routeAnnounce.points(j);
+                result += QString("  Punto %1: (%2, %3), Velocità: %4, Timestamp: %5, Nome: %6\n")
+                              .arg(j + 1)
+                              .arg(point.latitude())
+                              .arg(point.longitude())
+                              .arg(point.speed())
+                              .arg(point.timestamp())
+                              .arg(QString::fromStdString(point.name()));
+            }
         } else {
             result += QString("Messaggio %1 non è di tipo ServiceAnnounce.\n").arg(i);
         }
@@ -89,6 +117,21 @@ QString ProtoManager::createMultipleMessages() {
 
     return serializeFCMessage(fcMessage);
 }
+
+QString ProtoManager::createRouteAnnounceMessage(RouteType routeType, const QString &jsonString) {
+    fc::FCMessage fcMessage;
+
+     // Utilizza CreateMessage per aggiungere un messaggio ROUTE_ANNOUNCE
+    ProtoLib::ReturnStatus_t res = ProtoMessages::CreateMessage<ProtoLib::FCMessageType_t::MSGT_ROUTE_ANNOUNCE>(fcMessage,jsonString);
+
+    if (res != ProtoLib::ReturnStatus_t::RETURN_STATUS_OK) {
+        qWarning() << "Errore nella creazione del messaggio.";
+        return "";
+    }
+
+    return serializeFCMessage(fcMessage);
+}
+
 
 QString ProtoManager::serializeFCMessage(const fc::FCMessage &message) {
     std::string serializedMessage;

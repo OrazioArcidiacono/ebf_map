@@ -28,10 +28,14 @@ namespace fc {
 
 inline constexpr RoutePoint::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : latitude_{0},
+      : name_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        latitude_{0},
         longitude_{0},
         timestamp_{::int64_t{0}},
         speed_{0},
+        type_{static_cast< ::fc::RouteTypeEnum >(0)},
         _cached_size_{0} {}
 
 template <typename>
@@ -60,7 +64,10 @@ inline constexpr RouteAnnounce::Impl_::Impl_(
         route_id_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        type_{static_cast< ::fc::RouteAnnounce_RouteType >(0)},
+        description_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        type_{static_cast< ::fc::RouteTypeEnum >(0)},
         _cached_size_{0} {}
 
 template <typename>
@@ -83,7 +90,7 @@ struct RouteAnnounceDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RouteAnnounceDefaultTypeInternal _RouteAnnounce_default_instance_;
 }  // namespace fc
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_FC_5fRoute_5fMessage_2eproto[2];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_FC_5fRoute_5fMessage_2eproto[1];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_FC_5fRoute_5fMessage_2eproto = nullptr;
 const ::uint32_t
@@ -101,6 +108,8 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::fc::RoutePoint, _impl_.longitude_),
         PROTOBUF_FIELD_OFFSET(::fc::RoutePoint, _impl_.timestamp_),
         PROTOBUF_FIELD_OFFSET(::fc::RoutePoint, _impl_.speed_),
+        PROTOBUF_FIELD_OFFSET(::fc::RoutePoint, _impl_.type_),
+        PROTOBUF_FIELD_OFFSET(::fc::RoutePoint, _impl_.name_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::fc::RouteAnnounce, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -112,12 +121,13 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::fc::RouteAnnounce, _impl_.route_id_),
         PROTOBUF_FIELD_OFFSET(::fc::RouteAnnounce, _impl_.type_),
         PROTOBUF_FIELD_OFFSET(::fc::RouteAnnounce, _impl_.points_),
+        PROTOBUF_FIELD_OFFSET(::fc::RouteAnnounce, _impl_.description_),
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
         {0, -1, -1, sizeof(::fc::RoutePoint)},
-        {12, -1, -1, sizeof(::fc::RouteAnnounce)},
+        {14, -1, -1, sizeof(::fc::RouteAnnounce)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::fc::_RoutePoint_default_instance_._instance,
@@ -125,20 +135,21 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_FC_5fRoute_5fMessage_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\026FC_Route_Message.proto\022\002fc\"S\n\nRoutePoi"
-    "nt\022\020\n\010latitude\030\001 \001(\001\022\021\n\tlongitude\030\002 \001(\001\022"
-    "\021\n\ttimestamp\030\003 \001(\003\022\r\n\005speed\030\004 \001(\001\"\222\001\n\rRo"
-    "uteAnnounce\022\020\n\010route_id\030\001 \001(\t\022)\n\004type\030\002 "
-    "\001(\0162\033.fc.RouteAnnounce.RouteType\022\036\n\006poin"
-    "ts\030\003 \003(\0132\016.fc.RoutePoint\"$\n\tRouteType\022\t\n"
-    "\005ROUTE\020\000\022\014\n\010POSITION\020\001*$\n\tRouteType\022\t\n\005R"
-    "OUTE\020\000\022\014\n\010POSITION\020\001b\006proto3"
+    "\n\026FC_Route_Message.proto\022\002fc\"\202\001\n\nRoutePo"
+    "int\022\020\n\010latitude\030\001 \001(\001\022\021\n\tlongitude\030\002 \001(\001"
+    "\022\021\n\ttimestamp\030\003 \001(\003\022\r\n\005speed\030\004 \001(\001\022\037\n\004ty"
+    "pe\030\005 \001(\0162\021.fc.RouteTypeEnum\022\014\n\004name\030\006 \001("
+    "\t\"w\n\rRouteAnnounce\022\020\n\010route_id\030\001 \001(\t\022\037\n\004"
+    "type\030\002 \001(\0162\021.fc.RouteTypeEnum\022\036\n\006points\030"
+    "\003 \003(\0132\016.fc.RoutePoint\022\023\n\013description\030\004 \001"
+    "(\t*(\n\rRouteTypeEnum\022\t\n\005ROUTE\020\000\022\014\n\010POSITI"
+    "ON\020\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_FC_5fRoute_5fMessage_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_FC_5fRoute_5fMessage_2eproto = {
     false,
     false,
-    308,
+    332,
     descriptor_table_protodef_FC_5fRoute_5fMessage_2eproto,
     "FC_Route_Message.proto",
     &descriptor_table_FC_5fRoute_5fMessage_2eproto_once,
@@ -152,33 +163,13 @@ PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_FC_5fRoute_5fM
     file_level_service_descriptors_FC_5fRoute_5fMessage_2eproto,
 };
 namespace fc {
-const ::google::protobuf::EnumDescriptor* RouteAnnounce_RouteType_descriptor() {
+const ::google::protobuf::EnumDescriptor* RouteTypeEnum_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_FC_5fRoute_5fMessage_2eproto);
   return file_level_enum_descriptors_FC_5fRoute_5fMessage_2eproto[0];
 }
-PROTOBUF_CONSTINIT const uint32_t RouteAnnounce_RouteType_internal_data_[] = {
+PROTOBUF_CONSTINIT const uint32_t RouteTypeEnum_internal_data_[] = {
     131072u, 0u, };
-bool RouteAnnounce_RouteType_IsValid(int value) {
-  return 0 <= value && value <= 1;
-}
-#if (__cplusplus < 201703) && \
-  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-
-constexpr RouteAnnounce_RouteType RouteAnnounce::ROUTE;
-constexpr RouteAnnounce_RouteType RouteAnnounce::POSITION;
-constexpr RouteAnnounce_RouteType RouteAnnounce::RouteType_MIN;
-constexpr RouteAnnounce_RouteType RouteAnnounce::RouteType_MAX;
-constexpr int RouteAnnounce::RouteType_ARRAYSIZE;
-
-#endif  // (__cplusplus < 201703) &&
-        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::google::protobuf::EnumDescriptor* RouteType_descriptor() {
-  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_FC_5fRoute_5fMessage_2eproto);
-  return file_level_enum_descriptors_FC_5fRoute_5fMessage_2eproto[1];
-}
-PROTOBUF_CONSTINIT const uint32_t RouteType_internal_data_[] = {
-    131072u, 0u, };
-bool RouteType_IsValid(int value) {
+bool RouteTypeEnum_IsValid(int value) {
   return 0 <= value && value <= 1;
 }
 // ===================================================================
@@ -196,24 +187,49 @@ RoutePoint::RoutePoint(::google::protobuf::Arena* arena)
   SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:fc.RoutePoint)
 }
+inline PROTOBUF_NDEBUG_INLINE RoutePoint::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::fc::RoutePoint& from_msg)
+      : name_(arena, from.name_),
+        _cached_size_{0} {}
+
 RoutePoint::RoutePoint(
-    ::google::protobuf::Arena* arena, const RoutePoint& from)
-    : RoutePoint(arena) {
-  MergeFrom(from);
+    ::google::protobuf::Arena* arena,
+    const RoutePoint& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  RoutePoint* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, latitude_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, latitude_),
+           offsetof(Impl_, type_) -
+               offsetof(Impl_, latitude_) +
+               sizeof(Impl_::type_));
+
+  // @@protoc_insertion_point(copy_constructor:fc.RoutePoint)
 }
 inline PROTOBUF_NDEBUG_INLINE RoutePoint::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : _cached_size_{0} {}
+      : name_(arena),
+        _cached_size_{0} {}
 
 inline void RoutePoint::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, latitude_),
            0,
-           offsetof(Impl_, speed_) -
+           offsetof(Impl_, type_) -
                offsetof(Impl_, latitude_) +
-               sizeof(Impl_::speed_));
+               sizeof(Impl_::type_));
 }
 RoutePoint::~RoutePoint() {
   // @@protoc_insertion_point(destructor:fc.RoutePoint)
@@ -223,6 +239,7 @@ inline void RoutePoint::SharedDtor(MessageLite& self) {
   RoutePoint& this_ = static_cast<RoutePoint&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.name_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -231,7 +248,7 @@ inline void* RoutePoint::PlacementNew_(const void*, void* mem,
   return ::new (mem) RoutePoint(arena);
 }
 constexpr auto RoutePoint::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(RoutePoint),
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(RoutePoint),
                                             alignof(RoutePoint));
 }
 PROTOBUF_CONSTINIT
@@ -262,15 +279,15 @@ const ::google::protobuf::internal::ClassData* RoutePoint::GetClassData() const 
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 0, 2> RoutePoint::_table_ = {
+const ::_pbi::TcParseTable<3, 6, 0, 26, 2> RoutePoint::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    4, 24,  // max_field_number, fast_idx_mask
+    6, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967280,  // skipmap
+    4294967232,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    4,  // num_field_entries
+    6,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -280,9 +297,7 @@ const ::_pbi::TcParseTable<2, 4, 0, 0, 2> RoutePoint::_table_ = {
     ::_pbi::TcParser::GetTable<::fc::RoutePoint>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // double speed = 4;
-    {::_pbi::TcParser::FastF64S1,
-     {33, 63, 0, PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.speed_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // double latitude = 1;
     {::_pbi::TcParser::FastF64S1,
      {9, 63, 0, PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.latitude_)}},
@@ -292,6 +307,16 @@ const ::_pbi::TcParseTable<2, 4, 0, 0, 2> RoutePoint::_table_ = {
     // int64 timestamp = 3;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(RoutePoint, _impl_.timestamp_), 63>(),
      {24, 63, 0, PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.timestamp_)}},
+    // double speed = 4;
+    {::_pbi::TcParser::FastF64S1,
+     {33, 63, 0, PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.speed_)}},
+    // .fc.RouteTypeEnum type = 5;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(RoutePoint, _impl_.type_), 63>(),
+     {40, 63, 0, PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.type_)}},
+    // string name = 6;
+    {::_pbi::TcParser::FastUS1,
+     {50, 63, 0, PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.name_)}},
+    {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
@@ -307,9 +332,18 @@ const ::_pbi::TcParseTable<2, 4, 0, 0, 2> RoutePoint::_table_ = {
     // double speed = 4;
     {PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.speed_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kDouble)},
+    // .fc.RouteTypeEnum type = 5;
+    {PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.type_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kOpenEnum)},
+    // string name = 6;
+    {PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.name_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
+    "\15\0\0\0\0\0\4\0"
+    "fc.RoutePoint"
+    "name"
   }},
 };
 
@@ -320,9 +354,10 @@ PROTOBUF_NOINLINE void RoutePoint::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.name_.ClearToEmpty();
   ::memset(&_impl_.latitude_, 0, static_cast<::size_t>(
-      reinterpret_cast<char*>(&_impl_.speed_) -
-      reinterpret_cast<char*>(&_impl_.latitude_)) + sizeof(_impl_.speed_));
+      reinterpret_cast<char*>(&_impl_.type_) -
+      reinterpret_cast<char*>(&_impl_.latitude_)) + sizeof(_impl_.type_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -369,6 +404,21 @@ PROTOBUF_NOINLINE void RoutePoint::Clear() {
                 4, this_._internal_speed(), target);
           }
 
+          // .fc.RouteTypeEnum type = 5;
+          if (this_._internal_type() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteEnumToArray(
+                5, this_._internal_type(), target);
+          }
+
+          // string name = 6;
+          if (!this_._internal_name().empty()) {
+            const std::string& _s = this_._internal_name();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "fc.RoutePoint.name");
+            target = stream->WriteStringMaybeAliased(6, _s, target);
+          }
+
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
             target =
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -394,6 +444,11 @@ PROTOBUF_NOINLINE void RoutePoint::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
+            // string name = 6;
+            if (!this_._internal_name().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_name());
+            }
             // double latitude = 1;
             if (::absl::bit_cast<::uint64_t>(this_._internal_latitude()) != 0) {
               total_size += 9;
@@ -411,6 +466,11 @@ PROTOBUF_NOINLINE void RoutePoint::Clear() {
             if (::absl::bit_cast<::uint64_t>(this_._internal_speed()) != 0) {
               total_size += 9;
             }
+            // .fc.RouteTypeEnum type = 5;
+            if (this_._internal_type() != 0) {
+              total_size += 1 +
+                            ::_pbi::WireFormatLite::EnumSize(this_._internal_type());
+            }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
@@ -424,6 +484,9 @@ void RoutePoint::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_name().empty()) {
+    _this->_internal_set_name(from._internal_name());
+  }
   if (::absl::bit_cast<::uint64_t>(from._internal_latitude()) != 0) {
     _this->_impl_.latitude_ = from._impl_.latitude_;
   }
@@ -435,6 +498,9 @@ void RoutePoint::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goog
   }
   if (::absl::bit_cast<::uint64_t>(from._internal_speed()) != 0) {
     _this->_impl_.speed_ = from._impl_.speed_;
+  }
+  if (from._internal_type() != 0) {
+    _this->_impl_.type_ = from._impl_.type_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -449,10 +515,13 @@ void RoutePoint::CopyFrom(const RoutePoint& from) {
 
 void RoutePoint::InternalSwap(RoutePoint* PROTOBUF_RESTRICT other) {
   using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, &other->_impl_.name_, arena);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.speed_)
-      + sizeof(RoutePoint::_impl_.speed_)
+      PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.type_)
+      + sizeof(RoutePoint::_impl_.type_)
       - PROTOBUF_FIELD_OFFSET(RoutePoint, _impl_.latitude_)>(
           reinterpret_cast<char*>(&_impl_.latitude_),
           reinterpret_cast<char*>(&other->_impl_.latitude_));
@@ -481,6 +550,7 @@ inline PROTOBUF_NDEBUG_INLINE RouteAnnounce::Impl_::Impl_(
     const Impl_& from, const ::fc::RouteAnnounce& from_msg)
       : points_{visibility, arena, from.points_},
         route_id_(arena, from.route_id_),
+        description_(arena, from.description_),
         _cached_size_{0} {}
 
 RouteAnnounce::RouteAnnounce(
@@ -505,6 +575,7 @@ inline PROTOBUF_NDEBUG_INLINE RouteAnnounce::Impl_::Impl_(
     ::google::protobuf::Arena* arena)
       : points_{visibility, arena},
         route_id_(arena),
+        description_(arena),
         _cached_size_{0} {}
 
 inline void RouteAnnounce::SharedCtor(::_pb::Arena* arena) {
@@ -520,6 +591,7 @@ inline void RouteAnnounce::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.route_id_.Destroy();
+  this_._impl_.description_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -571,15 +643,15 @@ const ::google::protobuf::internal::ClassData* RouteAnnounce::GetClassData() con
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 1, 33, 2> RouteAnnounce::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 1, 44, 2> RouteAnnounce::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    3, 24,  // max_field_number, fast_idx_mask
+    4, 24,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967288,  // skipmap
+    4294967280,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    3,  // num_field_entries
+    4,  // num_field_entries
     1,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
@@ -589,11 +661,13 @@ const ::_pbi::TcParseTable<2, 3, 1, 33, 2> RouteAnnounce::_table_ = {
     ::_pbi::TcParser::GetTable<::fc::RouteAnnounce>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // string description = 4;
+    {::_pbi::TcParser::FastUS1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(RouteAnnounce, _impl_.description_)}},
     // string route_id = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(RouteAnnounce, _impl_.route_id_)}},
-    // .fc.RouteAnnounce.RouteType type = 2;
+    // .fc.RouteTypeEnum type = 2;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(RouteAnnounce, _impl_.type_), 63>(),
      {16, 63, 0, PROTOBUF_FIELD_OFFSET(RouteAnnounce, _impl_.type_)}},
     // repeated .fc.RoutePoint points = 3;
@@ -605,18 +679,22 @@ const ::_pbi::TcParseTable<2, 3, 1, 33, 2> RouteAnnounce::_table_ = {
     // string route_id = 1;
     {PROTOBUF_FIELD_OFFSET(RouteAnnounce, _impl_.route_id_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // .fc.RouteAnnounce.RouteType type = 2;
+    // .fc.RouteTypeEnum type = 2;
     {PROTOBUF_FIELD_OFFSET(RouteAnnounce, _impl_.type_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kOpenEnum)},
     // repeated .fc.RoutePoint points = 3;
     {PROTOBUF_FIELD_OFFSET(RouteAnnounce, _impl_.points_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // string description = 4;
+    {PROTOBUF_FIELD_OFFSET(RouteAnnounce, _impl_.description_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }}, {{
     {::_pbi::TcParser::GetTable<::fc::RoutePoint>()},
   }}, {{
-    "\20\10\0\0\0\0\0\0"
+    "\20\10\0\0\13\0\0\0"
     "fc.RouteAnnounce"
     "route_id"
+    "description"
   }},
 };
 
@@ -629,6 +707,7 @@ PROTOBUF_NOINLINE void RouteAnnounce::Clear() {
 
   _impl_.points_.Clear();
   _impl_.route_id_.ClearToEmpty();
+  _impl_.description_.ClearToEmpty();
   _impl_.type_ = 0;
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -656,7 +735,7 @@ PROTOBUF_NOINLINE void RouteAnnounce::Clear() {
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // .fc.RouteAnnounce.RouteType type = 2;
+          // .fc.RouteTypeEnum type = 2;
           if (this_._internal_type() != 0) {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteEnumToArray(
@@ -672,6 +751,14 @@ PROTOBUF_NOINLINE void RouteAnnounce::Clear() {
                 ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
                     3, repfield, repfield.GetCachedSize(),
                     target, stream);
+          }
+
+          // string description = 4;
+          if (!this_._internal_description().empty()) {
+            const std::string& _s = this_._internal_description();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "fc.RouteAnnounce.description");
+            target = stream->WriteStringMaybeAliased(4, _s, target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -713,7 +800,12 @@ PROTOBUF_NOINLINE void RouteAnnounce::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_route_id());
             }
-            // .fc.RouteAnnounce.RouteType type = 2;
+            // string description = 4;
+            if (!this_._internal_description().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_description());
+            }
+            // .fc.RouteTypeEnum type = 2;
             if (this_._internal_type() != 0) {
               total_size += 1 +
                             ::_pbi::WireFormatLite::EnumSize(this_._internal_type());
@@ -736,6 +828,9 @@ void RouteAnnounce::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::g
   if (!from._internal_route_id().empty()) {
     _this->_internal_set_route_id(from._internal_route_id());
   }
+  if (!from._internal_description().empty()) {
+    _this->_internal_set_description(from._internal_description());
+  }
   if (from._internal_type() != 0) {
     _this->_impl_.type_ = from._impl_.type_;
   }
@@ -757,6 +852,7 @@ void RouteAnnounce::InternalSwap(RouteAnnounce* PROTOBUF_RESTRICT other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.points_.InternalSwap(&other->_impl_.points_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.route_id_, &other->_impl_.route_id_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.description_, &other->_impl_.description_, arena);
   swap(_impl_.type_, other->_impl_.type_);
 }
 

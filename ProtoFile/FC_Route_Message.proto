@@ -3,28 +3,25 @@ syntax = "proto3";
 package fc;
 
 // Enumerativo per distinguere il tipo di dato
-enum RouteType {
+enum RouteTypeEnum {
     ROUTE = 0;       // Rappresenta una rotta completa
     POSITION = 1;    // Rappresenta una posizione puntuale
 }
 
 // Un singolo punto della rotta
 message RoutePoint {
-    double latitude = 1;
-    double longitude = 2;
-    int64 timestamp = 3;
-    double speed = 4; // Velocità (opzionale)
+    double latitude = 1;          // Latitudine del punto
+    double longitude = 2;         // Longitudine del punto
+    int64 timestamp = 3;          // Timestamp del punto
+    double speed = 4;             // Velocità (opzionale)
+    RouteTypeEnum type = 5;       // Tipo di dato (opzionale)
+    string name = 6;              // Nome del punto (es. "Punto A")
 }
 
 // La rotta
 message RouteAnnounce {
-    // Enumerativo per distinguere il tipo di dato
-    enum RouteType {
-         ROUTE = 0;       // Rappresenta una rotta completa
-         POSITION = 1;    // Rappresenta una posizione puntuale
-    }
-
-    string route_id = 1;                // ID della rotta - controllare
-    RouteType type = 2;                 // Descrizione
-    repeated RoutePoint points = 3;     // Punti della rotta
+    string route_id = 1;                // ID della rotta
+    RouteTypeEnum type = 2;             // Tipo di dato (ROUTE o POSITION)
+    repeated RoutePoint points = 3;     // Lista dei punti della rotta
+    string description = 4;             // Descrizione della rotta (opzionale)
 }
