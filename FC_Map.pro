@@ -12,6 +12,7 @@ QML_IMPORT_PATH = $$PWD
 
 # Specifica le directory delle risorse
 SOURCES += \
+    RouteFollower.cpp \
     gen_proto/*.pb.cc \
     ProtoManager.cpp \
     src/proto/ProtoLib.cpp
@@ -93,6 +94,7 @@ INCLUDEPATH += /usr/local/include
      /usr/local/Cellar/abseil/20240722.0/lib/libabsl_log_sink.dylib
 
 HEADERS += \
+    RouteFollower.h \
     gen_proto/*.pb.h \
     ProtoManager.h \
     src/proto/ProtoBuild.h \

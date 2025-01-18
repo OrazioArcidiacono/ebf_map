@@ -21,9 +21,9 @@ Item {
         id: mapPlugin
         name: "osm"
         parameters: [
-                    PluginParameter { name: "osm.mapping.providersrepository.address"; value: "https://tile.openstreetmap.org/" },
-                    PluginParameter { name: "osm.mapping.providersrepository.enabled"; value: true }
-                ]
+            PluginParameter { name: "osm.mapping.providersrepository.address"; value: "https://tile.openstreetmap.org/" },
+            PluginParameter { name: "osm.mapping.providersrepository.enabled"; value: true }
+        ]
     }
 
     Map {
@@ -93,6 +93,61 @@ Item {
         // Modello per contenere i dati dei marker
         ListModel {
             id: markerModel
+        }
+
+        ListModel {
+            id: vehicleModel
+        }
+
+        Repeater {
+            model: vehicleModel
+
+            MapQuickItem {
+                id: thread_vehicle
+                coordinate: QtPositioning.coordinate(model.latitude, model.longitude)
+                anchorPoint.x: icon.width / 2
+                anchorPoint.y: icon.height / 2
+
+                sourceItem: Image {
+                    id: icon
+                    source: model.icon
+                    width: 32
+                    height: 32
+                }
+            }
+        }
+
+        // Connetti il segnale di ProtoManager per aggiornare la posizione dei veicoli
+        Connections {
+            target: protoManager
+
+            // Aggiungi un nuovo veicolo al modello
+            onAddVehicle: {
+                vehicleModel.append({
+                    id: vehicleId,
+                    latitude: initialPosition.latitude,
+                    longitude: initialPosition.longitude,
+                    icon: icon
+                });
+                console.log("Veicolo aggiunto:", vehicleId, "alla posizione", initialPosition.latitude, initialPosition.longitude);
+            }
+
+            // Aggiorna la posizione di un veicolo esistente
+            onUpdateVehiclePosition: {
+                for (var i = 0; i < vehicleModel.count; i++) {
+                    var vehicle = vehicleModel.get(i);
+                    if (vehicle.id === vehicleId) {
+                        vehicleModel.set(i, {
+                            id: vehicle.id,
+                            latitude: position.latitude,
+                            longitude: position.longitude,
+                            icon: vehicle.icon
+                        });
+                        console.log("Posizione aggiornata per veicolo:", vehicleId, position.latitude, position.longitude);
+                        break;
+                    }
+                }
+            }
         }
 
         // Vista per visualizzare i marker sulla mappa
@@ -393,9 +448,9 @@ Item {
                     for (var j = 0; j < route.path.length; j++) {
                         var coord = route.path[j];
                         routeJson.points.push({
-                            latitude: coord.latitude,
-                            longitude: coord.longitude
-                        });
+                                                  latitude: coord.latitude,
+                                                  longitude: coord.longitude
+                                              });
                     }
                 }
             }

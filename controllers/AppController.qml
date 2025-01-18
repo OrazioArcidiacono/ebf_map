@@ -13,12 +13,14 @@ QtObject {
     // Stato della simulazione
     property string simulationState: "stopped" // Valori: "stopped", "running", "paused"
     property bool hasRoute: false // Valore di default: nessuna rotta
+    property var routeMessage
 
     // Segnali per aggiornare il menu
     signal simulationStarted()
     signal simulationPaused()
     signal simulationResumed()
     signal simulationStopped()
+    signal threadStarting(string RouteMessage)
 
     // Funzioni
     function handleExitApplication() {
@@ -78,13 +80,18 @@ QtObject {
 
     function handleAvailableRoute(routeJson) {
         console.log("AppController: Route is available");
-        var RouteMessage = protoManager.createRouteAnnounceMessage(protoManager.ROUTE_JSON, routeJson);
-        console.log("Messaggio Deserializzato:", RouteMessage);
-        // Legge il messaggio
-        var parsedRouteMessage = protoManager.readMessage(RouteMessage);
-        console.log("Messaggio Letto:", parsedRouteMessage);
+        routeMessage = protoManager.createRouteAnnounceMessage(protoManager.ROUTE_JSON, routeJson);
+//        console.log("Messaggio Deserializzato:", RouteMessage);
+//        // Legge il messaggio
+//        var parsedRouteMessage = protoManager.readMessage(RouteMessage);
+//        console.log("Messaggio Letto:", parsedRouteMessage);
         hasRoute = true;
         simulationState = "stopped"; // Torna allo stato di default
+    }
+
+    function handleThreadStarting(){
+        console.log("AppController: Thread Starting");
+        threadStarting(routeMessage);
     }
 
 }

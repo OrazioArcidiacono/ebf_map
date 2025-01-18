@@ -17,6 +17,8 @@ MenuBar {
     signal simulationResumed()
     signal simulationStopped()
 
+    signal threadStarting()
+
     Menu {
         title: qsTr("File")
         MenuItem {
@@ -75,6 +77,11 @@ MenuBar {
             text: qsTr("Stop Simulation")
             enabled: controller.simulationState !== "stopped"
             onTriggered: simulationStopped()
+        }
+
+        MenuItem {
+            text: qsTr("Thread Study")
+            onTriggered: threadStarting()
         }
     }
 }

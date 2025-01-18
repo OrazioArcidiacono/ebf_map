@@ -28,6 +28,10 @@ ApplicationWindow {
         onSimulationPaused: simManager.pauseSimulation()
         onSimulationResumed: simManager.resumeSimulation()
         onSimulationStopped: simManager.stopSimulation()
+        onThreadStarting: function (routeMessage) {
+            console.log("Start following Route");
+            protoManager.startRouteThreads(routeMessage)
+        }
     }
 
     ProtoManager {
@@ -54,6 +58,7 @@ ApplicationWindow {
         onSimulationPaused: appController.handlePauseSimulation()
         onSimulationResumed: appController.handleResumeSimulation()
         onSimulationStopped: appController.handleStopSimulation()
+        onThreadStarting: appController.handleThreadStarting()
     }
 
     // Mappa

@@ -10,7 +10,8 @@
 #include <QJsonArray>
 
 
-ProtoManager::ProtoManager(QObject *parent) : QObject(parent) {}
+ProtoManager::ProtoManager(QObject *parent) : QObject(parent) {
+  }
 
 QString ProtoManager::createServiceMessage(ServiceStatusType statusType) {
     fc::FCMessage fcMessage;
@@ -30,7 +31,14 @@ QString ProtoManager::createServiceMessage(ServiceStatusType statusType) {
     return serializeFCMessage(fcMessage);
 }
 
-
+ProtoManager::~ProtoManager() {
+    // Termina tutti i thread in modo sicuro
+    for (auto thread : m_threads.values()) {
+        thread->quit();
+        thread->wait();
+        delete thread;
+    }
+}
 
 QString ProtoManager::readMessage(const QString &serializedMessage) {
     fc::FCMessage fcMessage;
@@ -103,7 +111,6 @@ QString ProtoManager::readMessage(const QString &serializedMessage) {
     return result;
 }
 
-
 QString ProtoManager::createMultipleMessages() {
     fc::FCMessage fcMessage;
 
@@ -133,7 +140,6 @@ QString ProtoManager::createRouteAnnounceMessage(RouteType routeType, const QStr
     return serializeFCMessage(fcMessage);
 }
 
-
 QString ProtoManager::serializeFCMessage(const fc::FCMessage &message) {
     std::string serializedMessage;
 
@@ -147,4 +153,51 @@ QString ProtoManager::serializeFCMessage(const fc::FCMessage &message) {
     QByteArray base64Message = QByteArray::fromStdString(serializedMessage).toBase64();
     emit messageGenerated(QString(base64Message));
     return QString(base64Message);
+}
+
+void ProtoManager::startThreadForVehicle(int vehicleId, const QString &serializedMessage) {
+    if (m_threads.contains(vehicleId)) {
+        qWarning() << "Il thread per il veicolo" << vehicleId << "è già in esecuzione.";
+        return;
+    }
+
+    fc::FCMessage fcMessage;
+    QByteArray byteArray = QByteArray::fromBase64(serializedMessage.toUtf8());
+    if (!fcMessage.ParseFromString(byteArray.toStdString())) {
+        qWarning() << "Errore nella deserializzazione del messaggio.";
+        return;
+    }
+
+    if (fcMessage.messages_size() > 0 && fcMessage.messages(0).has_routeannounce()) {
+        const auto &routeAnnounce = fcMessage.messages(0).routeannounce();
+
+        QVector<fc::RoutePoint> routePoints;
+        for (int i = 0; i < routeAnnounce.points_size(); ++i) {
+            routePoints.append(routeAnnounce.points(i));
+        }
+
+        if (routePoints.isEmpty()) {
+            qWarning() << "Nessun punto nella rotta.";
+            return;
+        }
+
+        // Inizializza il thread
+        auto *thread = new RouteFollower(this);
+        connect(thread, &RouteFollower::updateVehiclePosition, this, &ProtoManager::updateVehiclePosition);
+
+        // Imposta il percorso per il thread
+        thread->setRoute(vehicleId, routePoints, false);
+
+        // Aggiungi il thread alla mappa
+        m_threads[vehicleId] = thread;
+
+        // Emette il segnale per aggiungere un nuovo veicolo in QML
+        QGeoCoordinate initialPosition(routePoints.first().latitude(), routePoints.first().longitude());
+        emit addVehicle(vehicleId, initialPosition, "qrc:/car.png");
+
+        // Avvia il thread
+        thread->start();
+    } else {
+        qWarning() << "Nessun RouteAnnounce trovato nel messaggio.";
+    }
 }
