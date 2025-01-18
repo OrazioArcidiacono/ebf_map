@@ -61,7 +61,9 @@ ApplicationWindow {
         id: mapView
         anchors.topMargin: mainMenuBar.height // Imposto un margine per evitare sovrapposizioni con MenuBarView
         controller: appController // Passa il controller
-        onCompletedRoute: appController.availableRoute()
+        onRouteCompleted: function(routeJson) {
+            appController.handleAvailableRoute(routeJson);
+        }
     }
 
     SimulationManager {
@@ -79,9 +81,9 @@ ApplicationWindow {
         var onlineMessage = protoManager.createServiceMessage(ProtoManager.SERVICE_STATUS_ONLINE);
         console.log("Messaggio Online:", onlineMessage);
 
-//        // Crea messaggi multipli
-//        var multipleMessages = protoManager.createMultipleMessages();
-//        console.log("Messaggi Multipli:", multipleMessages);
+        // Crea messaggi multipli
+        var multipleMessages = protoManager.createMultipleMessages();
+        console.log("Messaggi Multipli:", multipleMessages);
 
         // Legge il messaggio
         var parsedOnlineMessage = protoManager.readMessage(onlineMessage);

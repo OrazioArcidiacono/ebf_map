@@ -23,7 +23,7 @@ QString ProtoManager::createServiceMessage(ServiceStatusType statusType) {
         );
 
     if (res != ProtoLib::ReturnStatus_t::RETURN_STATUS_OK) {
-        qWarning() << "Errore nella creazione del messaggio.";
+        qWarning() <<Q_FUNC_INFO<< "Errore nella creazione del messaggio.";
         return "";
     }
 
@@ -120,12 +120,13 @@ QString ProtoManager::createMultipleMessages() {
 
 QString ProtoManager::createRouteAnnounceMessage(RouteType routeType, const QString &jsonString) {
     fc::FCMessage fcMessage;
+    ProtoLib::ReturnStatus_t res;
 
-     // Utilizza CreateMessage per aggiungere un messaggio ROUTE_ANNOUNCE
-    ProtoLib::ReturnStatus_t res = ProtoMessages::CreateMessage<ProtoLib::FCMessageType_t::MSGT_ROUTE_ANNOUNCE>(fcMessage,jsonString);
+    res = ProtoMessages::CreateMessage<ProtoLib::FCMessageType_t::MSGT_ROUTE_ANNOUNCE>(fcMessage,jsonString,
+                                                                                       static_cast<fc::RouteTypeEnum>(routeType));
 
     if (res != ProtoLib::ReturnStatus_t::RETURN_STATUS_OK) {
-        qWarning() << "Errore nella creazione del messaggio.";
+        qWarning() <<Q_FUNC_INFO<< "Errore nella creazione del messaggio.";
         return "";
     }
 
@@ -138,7 +139,7 @@ QString ProtoManager::serializeFCMessage(const fc::FCMessage &message) {
 
     // Serializza il messaggio
     if (!message.SerializeToString(&serializedMessage)) {
-        qWarning() << "Errore nella serializzazione.";
+        qWarning() <<Q_FUNC_INFO<< "Errore nella serializzazione.";
         return "";
     }
 

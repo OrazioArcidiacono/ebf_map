@@ -15,7 +15,7 @@ Item {
     // Espone l'oggetto `Map` come proprietà
     property alias map: map
 
-    signal completedRoute()
+    signal routeCompleted(string routeJson)
 
     Plugin {
         id: mapPlugin
@@ -213,15 +213,16 @@ Item {
             onStatusChanged: {
                 console.log("RouteModel status changed: ", status)
                 //console.log("RouteModel full data:", JSON.stringify(routeModel, null, 2));
+
                 // Ottieni il JSON completo del RouteModel
                 var routeJson = JSON.stringify(routeModel, null, 2);
-                // Emetti il segnale con il JSON della rotta
-                mapView.routeCompleted(routeJson);
 
                 if (status == RouteModel.Ready) {
                     if (count > 0) {
                         console.log("Route calculation succeeded")
                         fitRoute(); // Centra e adatta la vista alla rotta
+                        var fullRouteJson = generateFullRouteJson(); // Genera il JSON completo
+                        routeCompleted(JSON.stringify(fullRouteJson)); // Emette il segnale con il JSON della rotta
                     } else {
                         console.log("No routes found")
                     }
@@ -374,5 +375,33 @@ Item {
         } else {
             console.log("No route data to fit");
         }
+    }
+
+    // Funzione per generare un JSON dettagliato della rotta con tutti i punti
+    function generateFullRouteJson() {
+        var routeJson = {
+            route_id: "custom_route_id",
+            description: "Route with all points",
+            type: 1, // Puoi personalizzare il tipo di rotta
+            points: []
+        };
+
+        if (routeModel.count > 0) {
+            for (var i = 0; i < routeModel.count; i++) {
+                var route = routeModel.get(i);
+                if (route && route.path) {
+                    for (var j = 0; j < route.path.length; j++) {
+                        var coord = route.path[j];
+                        routeJson.points.push({
+                            latitude: coord.latitude,
+                            longitude: coord.longitude
+                        });
+                    }
+                }
+            }
+        }
+
+        console.log("Generated Full Route JSON:\n", JSON.stringify(routeJson, null, 2));
+        return routeJson;
     }
 }

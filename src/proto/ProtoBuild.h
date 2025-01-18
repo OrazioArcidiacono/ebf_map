@@ -38,7 +38,7 @@ struct MessageBuilder<MSGT_SERVICE_ANNOUNCE> {
 // specialization for RouteAnnounce message
 template <>
 struct MessageBuilder<MSGT_ROUTE_ANNOUNCE> {
-  static ReturnStatus_t build(FCMessageType& p_message, const QString &jsonString) {
+  static ReturnStatus_t build(FCMessageType& p_message, const QString &jsonString, const RouteType routeType) {
 
     // Decodifica il JSON
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8());
@@ -47,13 +47,17 @@ struct MessageBuilder<MSGT_ROUTE_ANNOUNCE> {
     }
     QJsonObject jsonObject = jsonDoc.object();
 
+    // ** Stampa del JSON formattato **
+    qDebug().noquote() <<Q_FUNC_INFO<< "JSON Formattato:\n"
+                       << QJsonDocument(jsonObject).toJson(QJsonDocument::Indented);
+
     // Aggiungi un messaggio RouteAnnounce a FCMessage
     auto* l_fcAny = p_message.add_messages();
     auto* l_routeAnnounce = l_fcAny->mutable_routeannounce();
 
     // Popola il messaggio RouteAnnounce
     l_routeAnnounce->set_route_id(jsonObject["route_id"].toString().toStdString());
-    l_routeAnnounce->set_type(static_cast<fc::RouteTypeEnum>(jsonObject["type"].toInt()));
+    l_routeAnnounce->set_type(routeType);
     if (jsonObject.contains("description")) {
         l_routeAnnounce->set_description(jsonObject["description"].toString().toStdString());
     }

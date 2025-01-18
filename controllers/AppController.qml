@@ -76,8 +76,13 @@ QtObject {
         }
     }
 
-    function handleAvailableRoute() {
+    function handleAvailableRoute(routeJson) {
         console.log("AppController: Route is available");
+        var RouteMessage = protoManager.createRouteAnnounceMessage(protoManager.ROUTE_JSON, routeJson);
+        console.log("Messaggio Deserializzato:", RouteMessage);
+        // Legge il messaggio
+        var parsedRouteMessage = protoManager.readMessage(RouteMessage);
+        console.log("Messaggio Letto:", parsedRouteMessage);
         hasRoute = true;
         simulationState = "stopped"; // Torna allo stato di default
     }
