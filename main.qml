@@ -30,7 +30,8 @@ ApplicationWindow {
         onSimulationStopped: simManager.stopSimulation()
         onThreadStarting: function (routeMessage) {
             console.log("Start following Route");
-            protoManager.startRouteThreads(routeMessage)
+            protoManager.startThreadsForVehicles(4,routeMessage)
+           // protoManager.testAddVehicle()
         }
     }
 

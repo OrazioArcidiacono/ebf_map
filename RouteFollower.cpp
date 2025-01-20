@@ -30,25 +30,24 @@ void RouteFollower::run() {
     int step = m_reverse ? -1 : 1;
 
     for (int i = start; i != end; i += step) {
-        if (m_stop) {
+        if (QThread::currentThread()->isInterruptionRequested()) {
+            qDebug() << "Thread per veicolo" << m_vehicleId << "interrotto.";
             break;
         }
 
         const auto &point = m_routePoints[i];
         QGeoCoordinate position(point.latitude(), point.longitude());
 
-        // Log per debug
-        qDebug() << "Thread per veicolo" << m_vehicleId << ": Punto " << i
+        qDebug() << "Thread per veicolo" << m_vehicleId
+                 << ": Punto " << i
                  << "Latitudine =" << point.latitude()
                  << "Longitudine =" << point.longitude()
                  << "Timestamp =" << point.timestamp()
                  << "Velocità =" << point.speed();
 
-                                    // Emissione del segnale per aggiornare la posizione del veicolo
-                                    emit updateVehiclePosition(m_vehicleId, position);
+        emit updateVehiclePosition(m_vehicleId, position);
 
-        // Attendi 100ms prima di passare al prossimo punto
-        QThread::msleep(100);
+        QThread::msleep(1000);  // Riduci a 500ms per osservare meglio il movimento
     }
 
     qDebug() << "Thread per veicolo" << m_vehicleId << ": completato.";

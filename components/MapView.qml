@@ -17,6 +17,10 @@ Item {
 
     signal routeCompleted(string routeJson)
 
+    // Dizionario per tenere traccia delle istanze dei veicoli sulla mappa
+    property var vehicleObjects: ({})
+
+
     Plugin {
         id: mapPlugin
         name: "osm"
@@ -95,58 +99,45 @@ Item {
             id: markerModel
         }
 
+        // Modello dinamico per i veicoli, simile ai marker
         ListModel {
             id: vehicleModel
         }
 
-        Repeater {
+        // Vista per visualizzare i veicoli sulla mappa
+        MapItemView {
+            id: vehicleView
             model: vehicleModel
-
-            MapQuickItem {
-                id: thread_vehicle
-                coordinate: QtPositioning.coordinate(model.latitude, model.longitude)
-                anchorPoint.x: icon.width / 2
-                anchorPoint.y: icon.height / 2
+            delegate: MapQuickItem {
+                id: vehicleItem
+                coordinate: QtPositioning.coordinate(latitude, longitude)
+                anchorPoint.x: vehicleIcon.width / 2
+                anchorPoint.y: vehicleIcon.height / 2
 
                 sourceItem: Image {
-                    id: icon
-                    source: model.icon
-                    width: 32
-                    height: 32
+                    id: vehicleIcon
+                    source: "qrc:/car.png"
+                    width: 40
+                    height: 40
+                }
+
+                Component.onCompleted: {
+                    console.log("QML - Veicolo creato con ID:", vehicleId,
+                                "Latitudine:", latitude,
+                                "Longitudine:", longitude);
                 }
             }
         }
-
-        // Connetti il segnale di ProtoManager per aggiornare la posizione dei veicoli
+        // Connessioni al ProtoManager per aggiungere e aggiornare veicoli
         Connections {
             target: protoManager
 
-            // Aggiungi un nuovo veicolo al modello
-            onAddVehicle: {
-                vehicleModel.append({
-                    id: vehicleId,
-                    latitude: initialPosition.latitude,
-                    longitude: initialPosition.longitude,
-                    icon: icon
-                });
-                console.log("Veicolo aggiunto:", vehicleId, "alla posizione", initialPosition.latitude, initialPosition.longitude);
+            function onAddVehicle(vehicleId, initialPosition) {
+                addVehicle(vehicleId, initialPosition.latitude, initialPosition.longitude);
             }
 
-            // Aggiorna la posizione di un veicolo esistente
-            onUpdateVehiclePosition: {
-                for (var i = 0; i < vehicleModel.count; i++) {
-                    var vehicle = vehicleModel.get(i);
-                    if (vehicle.id === vehicleId) {
-                        vehicleModel.set(i, {
-                            id: vehicle.id,
-                            latitude: position.latitude,
-                            longitude: position.longitude,
-                            icon: vehicle.icon
-                        });
-                        console.log("Posizione aggiornata per veicolo:", vehicleId, position.latitude, position.longitude);
-                        break;
-                    }
-                }
+            function onUpdateVehiclePosition(vehicleId, position) {
+                updateVehiclePosition(vehicleId, position.latitude, position.longitude);
             }
         }
 
@@ -231,10 +222,10 @@ Item {
             id: vehicle
             coordinate: QtPositioning.coordinate(0, 0) // Inizialmente fuori mappa
             visible: false // Sarà visibile solo durante la simulazione
-            anchorPoint.x: carImage.width / 2
-            anchorPoint.y: carImage.height / 2
+            anchorPoint.x: carImagez.width / 2
+            anchorPoint.y: carImagez.height / 2
             sourceItem: Image {
-                id: carImage
+                id: carImagez
                 source: "qrc:/car.png"
                 width: 30
                 height: 30
@@ -459,4 +450,40 @@ Item {
         console.log("Generated Full Route JSON:\n", JSON.stringify(routeJson, null, 2));
         return routeJson;
     }
+
+    // Funzione per aggiungere un veicolo al modello
+    function addVehicle(vehicleId, lat, lon) {
+        if (isNaN(lat) || isNaN(lon)) {
+            console.error("QML - Errore: posizione non valida per il veicolo ID:", vehicleId);
+            return;
+        }
+
+        vehicleModel.append({
+            id: vehicleId,
+            latitude: lat,
+            longitude: lon
+        });
+
+        console.log("QML - Veicolo aggiunto con ID:", vehicleId,
+                    "Latitudine:", lat, "Longitudine:", lon);
+    }
+
+    // Funzione per aggiornare la posizione di un veicolo esistente
+    function updateVehiclePosition(vehicleId, lat, lon) {
+        for (var i = 0; i < vehicleModel.count; i++) {
+            if (vehicleModel.get(i).id === vehicleId) {
+                vehicleModel.set(i, {
+                    id: vehicleId,
+                    latitude: lat,
+                    longitude: lon
+                });
+
+                console.log("QML - Posizione aggiornata per veicolo:", vehicleId,
+                            "Lat:", lat, "Lon:", lon);
+                return;
+            }
+        }
+        console.warn("QML - Veicolo non trovato:", vehicleId);
+    }
+
 }

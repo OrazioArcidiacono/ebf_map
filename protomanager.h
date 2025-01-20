@@ -45,7 +45,12 @@ public:
      * @param vehicleId L'ID del veicolo.
      * @param serializedMessage Il messaggio serializzato che contiene i dati della rotta.
      */
-    Q_INVOKABLE void startThreadForVehicle(int vehicleId, const QString &serializedMessage);
+    Q_INVOKABLE void startThreadsForVehicles(int vehicleId, const QString &serializedMessage);
+
+    Q_INVOKABLE void testAddVehicle();
+
+public slots:
+    void testUpdateVehicle();
 
 signals:
     // Segnale per notificare la creazione di un messaggio
@@ -54,9 +59,8 @@ signals:
      * Segnale emesso quando un nuovo veicolo deve essere aggiunto in QML.
      * @param vehicleId L'ID del veicolo.
      * @param initialPosition La posizione iniziale del veicolo.
-     * @param icon L'icona associata al veicolo.
      */
-    void addVehicle(int vehicleId, const QGeoCoordinate &initialPosition, const QString &icon);
+    void addVehicle(int vehicleId, QGeoCoordinate initialPosition);
     /**
      * Segnale emesso per aggiornare la posizione di un veicolo sulla mappa.
      * @param vehicleId L'ID del veicolo.

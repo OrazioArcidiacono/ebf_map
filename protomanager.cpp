@@ -8,7 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-
+#include <QTimer>
 
 ProtoManager::ProtoManager(QObject *parent) : QObject(parent) {
   }
@@ -34,10 +34,13 @@ QString ProtoManager::createServiceMessage(ServiceStatusType statusType) {
 ProtoManager::~ProtoManager() {
     // Termina tutti i thread in modo sicuro
     for (auto thread : m_threads.values()) {
+        thread->requestInterruption();
         thread->quit();
         thread->wait();
         delete thread;
     }
+    m_threads.clear();
+    qDebug() << "Tutti i thread terminati correttamente.";
 }
 
 QString ProtoManager::readMessage(const QString &serializedMessage) {
@@ -155,12 +158,7 @@ QString ProtoManager::serializeFCMessage(const fc::FCMessage &message) {
     return QString(base64Message);
 }
 
-void ProtoManager::startThreadForVehicle(int vehicleId, const QString &serializedMessage) {
-    if (m_threads.contains(vehicleId)) {
-        qWarning() << "Il thread per il veicolo" << vehicleId << "è già in esecuzione.";
-        return;
-    }
-
+void ProtoManager::startThreadsForVehicles(int count, const QString &serializedMessage) {
     fc::FCMessage fcMessage;
     QByteArray byteArray = QByteArray::fromBase64(serializedMessage.toUtf8());
     if (!fcMessage.ParseFromString(byteArray.toStdString())) {
@@ -181,23 +179,38 @@ void ProtoManager::startThreadForVehicle(int vehicleId, const QString &serialize
             return;
         }
 
-        // Inizializza il thread
-        auto *thread = new RouteFollower(this);
-        connect(thread, &RouteFollower::updateVehiclePosition, this, &ProtoManager::updateVehiclePosition);
+        for (int i = 1; i <= count; ++i) {
+            if (m_threads.contains(i)) {
+                qWarning() << "Il thread per il veicolo" << i << "è già in esecuzione.";
+                continue;
+            }
 
-        // Imposta il percorso per il thread
-        thread->setRoute(vehicleId, routePoints, false);
+            auto *thread = new RouteFollower(this);
+            connect(thread, &RouteFollower::updateVehiclePosition, this, &ProtoManager::updateVehiclePosition);
 
-        // Aggiungi il thread alla mappa
-        m_threads[vehicleId] = thread;
+            thread->setRoute(i, routePoints, i % 2 == 0);
+            m_threads[i] = thread;
 
-        // Emette il segnale per aggiungere un nuovo veicolo in QML
-        QGeoCoordinate initialPosition(routePoints.first().latitude(), routePoints.first().longitude());
-        emit addVehicle(vehicleId, initialPosition, "qrc:/car.png");
+            QGeoCoordinate initialPosition(routePoints.first().latitude(), routePoints.first().longitude());
+            emit addVehicle(i, initialPosition);
 
-        // Avvia il thread
-        thread->start();
+            qDebug() << "Thread avviato per veicolo ID:" << i;
+            thread->start();
+        }
     } else {
         qWarning() << "Nessun RouteAnnounce trovato nel messaggio.";
     }
+}
+
+void ProtoManager::testAddVehicle() {
+    QGeoCoordinate startPosition(45.0703, 7.6869);  // Torino
+    emit addVehicle(1, startPosition);
+    qDebug() << "C++ - Veicolo aggiunto con ID 1 alla posizione" << startPosition;
+    QTimer::singleShot(5000, this, &ProtoManager::testUpdateVehicle);
+}
+
+void ProtoManager::testUpdateVehicle() {
+    QGeoCoordinate newPosition(45.0710, 7.6875);  // Nuova posizione
+    emit updateVehiclePosition(1, newPosition);
+    qDebug() << "C++ - Posizione aggiornata per veicolo ID 1 a " << newPosition;
 }
